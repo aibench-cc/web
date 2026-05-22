@@ -1,0 +1,49 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+const siteUrl = "https://aibench.cc";
+const siteTitle = "AIBench.cc — 多厂商 LLM API 健康检测";
+const siteDescription =
+  "一次粘贴 key，看清你的 API 渠道在延迟、缓存、限流、模型纯度、token 计费上的真实表现。覆盖 OpenAI / Claude / Gemini + 国产 DeepSeek / Kimi / 智谱 / 通义 / 豆包 等 10+ 厂商。";
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: siteTitle,
+  description: siteDescription,
+  openGraph: {
+    type: "website",
+    url: siteUrl,
+    title: siteTitle,
+    description: siteDescription,
+    siteName: "AIBench.cc",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+  },
+  icons: {
+    icon: "/aibench-icon.svg",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="zh-CN" className={inter.variable}>
+      <body className="font-sans antialiased min-h-screen bg-bg text-ink-900">
+        {children}
+      </body>
+    </html>
+  );
+}

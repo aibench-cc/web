@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-brand: #1E5FFF;
+  --color-bg: #FAFBFD;
+  --color-ink-900: #0E1525;
+  --color-ink-500: #5B6478;
+  --color-ink-300: #9AA3B2;
+  --color-signal-ok: #16A34A;
+  --color-signal-warn: #F59E0B;
+  --color-signal-err: #DC2626;
+}
+
+html,
+body {
+  background-color: var(--color-bg);
+  color: var(--color-ink-900);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
