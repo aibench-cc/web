@@ -5,9 +5,6 @@ import ReportView from "@/components/report/ReportView";
 import { seedReport } from "@/lib/report";
 import { fetchReport } from "@/lib/api";
 
-// CF Pages (next-on-pages) 要求动态 SSR 路由显式声明 edge runtime,否则构建失败
-export const runtime = "edge";
-
 // 按 reportId 从后端 /api/report/{id} 拉取报告;后端 404 或不可达时
 // 回退种子样本,保证分享链接与 demo 永远可渲染。组件与类型保持不变。
 async function loadReport(reportId: string) {

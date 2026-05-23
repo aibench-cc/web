@@ -4,9 +4,6 @@ import SponsorFooter from "@/components/SponsorFooter";
 import LeaderboardTable from "@/components/LeaderboardTable";
 import { fetchLeaderboard } from "@/lib/api";
 
-// CF Pages (next-on-pages) 要求动态 SSR 路由显式声明 edge runtime,否则构建失败
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: "行业榜 · AIBench.cc",
   description:
