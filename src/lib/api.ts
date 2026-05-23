@@ -9,7 +9,7 @@ import { seedReport, type Report } from "./report";
 import { seedLeaderboard, type LeaderboardRow } from "./leaderboard";
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE?.replace(/\/$/, "") || "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") || "http://localhost:8000";
 
 const TIMEOUT_MS = 6000;
 

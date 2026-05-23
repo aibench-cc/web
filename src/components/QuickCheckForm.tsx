@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ShieldCheck, RefreshCw, ChevronDown, Loader2 } from "lucide-react";
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE?.replace(/\/$/, "") || "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") || "http://localhost:8000";
 
 const protocols = [
   { id: "openai", label: "OpenAI 兼容", placeholder: "https://api.openai.com/v1" },
