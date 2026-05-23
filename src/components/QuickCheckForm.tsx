@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, RefreshCw, ChevronDown } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ShieldCheck, RefreshCw, ChevronDown, Loader2 } from "lucide-react";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE?.replace(/\/$/, "") || "http://localhost:8000";
@@ -14,6 +15,15 @@ const protocols = [
 
 type ProtocolId = (typeof protocols)[number]["id"];
 type FetchState = "idle" | "loading" | "loaded" | "error";
+
+type RunState = "queued" | "running" | "done" | "error";
+type Progress = {
+  state: RunState;
+  done: number;
+  total: number;
+  phase: string;
+  message?: string | null;
+};
 
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm font-mono text-hi placeholder:text-lo transition-colors focus:border-brand/60 focus:outline-none focus:ring-2 focus:ring-brand/20";
@@ -54,6 +64,11 @@ export default function QuickCheckForm() {
   const [durationSeconds, setDurationSeconds] = useState(30);
   const [targetRpm, setTargetRpm] = useState(60);
   const [targetTpm, setTargetTpm] = useState(20000);
+
+  const router = useRouter();
+  const [submitting, setSubmitting] = useState(false);
+  const [progress, setProgress] = useState<Progress | null>(null);
+  const [runError, setRunError] = useState<string | null>(null);
 
   const isQuick = mode === "latency";
   const estSeconds = isQuick ? 30 : durationSeconds;
@@ -99,9 +114,72 @@ export default function QuickCheckForm() {
     }
   }
 
+  async function startRun() {
+    if (!apiKey.trim()) {
+      setRunError("请先填写 api_key。");
+      return;
+    }
+    if (!model.trim()) {
+      setRunError("请先选择或手动输入 model id。");
+      return;
+    }
+    setRunError(null);
+    setSubmitting(true);
+    setProgress({ state: "queued", done: 0, total, phase: "初始化", message: null });
+    try {
+      const res = await fetch(`${API_BASE}/api/run`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          protocol,
+          base_url: baseUrl.trim() || null,
+          api_key: apiKey,
+          model: model.trim(),
+          mode: "latency",
+          opts: { total, concurrency },
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const { job_id: jobId } = (await res.json()) as { job_id: string };
+      const final = await pollUntilSettled(jobId);
+      if (final.state === "done") {
+        // 报告已落库,reportId == jobId;保持 submitting 直到页面跳转完成
+        router.push(`/r/${jobId}`);
+        return;
+      }
+      setSubmitting(false);
+      setRunError(final.message || "检测未通过,请检查渠道信息后重试。");
+    } catch {
+      setSubmitting(false);
+      setRunError("无法连接检测后端,请确认后端已启动后重试。");
+    }
+  }
+
+  async function pollUntilSettled(jobId: string): Promise<Progress> {
+    const deadline = Date.now() + 4 * 60 * 1000; // 最长等 4 分钟
+    while (Date.now() < deadline) {
+      await new Promise((r) => setTimeout(r, 900));
+      try {
+        const r = await fetch(`${API_BASE}/api/run/${jobId}/progress`, {
+          cache: "no-store",
+        });
+        if (!r.ok) continue;
+        const p = (await r.json()) as Progress;
+        setProgress(p);
+        if (p.state === "done" || p.state === "error") return p;
+      } catch {
+        // 网络抖动,继续轮询
+      }
+    }
+    return { state: "error", done: 0, total, phase: "", message: "检测超时,请稍后重试。" };
+  }
+
   return (
     <form
-      onSubmit={(e) => e.preventDefault()}
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (isQuick && !submitting) startRun();
+      }}
       className="glass-card relative p-6 lg:p-8 flex flex-col gap-5"
     >
       <div
@@ -292,9 +370,58 @@ export default function QuickCheckForm() {
         )}
       </div>
 
-      <button type="submit" className="btn-glow w-full !py-3.5 !text-base">
-        {isQuick ? "开始快检" : `开始检测 · ${modeMeta[mode].label}`}
+      <button
+        type="submit"
+        disabled={submitting || !isQuick}
+        className="btn-glow w-full !py-3.5 !text-base disabled:opacity-60 disabled:pointer-events-none"
+      >
+        {submitting ? (
+          <span className="inline-flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            {progress?.phase || "检测中"}
+            {progress?.state === "running" &&
+            progress.total > 0 &&
+            progress.done > 0
+              ? ` · ${progress.done}/${progress.total}`
+              : "…"}
+          </span>
+        ) : isQuick ? (
+          "开始快检"
+        ) : (
+          `${modeMeta[mode].label} · 即将上线`
+        )}
       </button>
+
+      {submitting && progress && (
+        <div
+          className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.06]"
+          aria-hidden
+        >
+          <div
+            className="h-full rounded-full bg-brand transition-all duration-500"
+            style={{
+              width: `${
+                progress.total > 0
+                  ? Math.max(6, Math.round((progress.done / progress.total) * 100))
+                  : 6
+              }%`,
+            }}
+          />
+        </div>
+      )}
+
+      {runError && (
+        <p className="rounded-lg border border-warn/30 bg-warn/[0.08] px-3 py-2 text-xs leading-relaxed text-warn">
+          {runError}
+        </p>
+      )}
+
+      {!isQuick && !submitting && (
+        <p className="text-center text-xs text-lo">
+          并发 / RPM / TPM 压测即将上线,当前可先运行快检(延迟 + 缓存)。
+        </p>
+      )}
+
       <p className="flex items-center justify-center gap-1.5 text-xs text-lo">
         <ShieldCheck className="h-3.5 w-3.5 text-ok" />
         预计 ~{estSeconds}s · key 仅本次转发不留存 · 算法核心开源
