@@ -32,22 +32,28 @@ export default function ReportHeader({
   const eff = overall === "skipped" ? "green" : overall;
   const badge = overallBadge[eff];
   const verdictBorder =
-    eff === "red" ? "border-err/50" : eff === "yellow" ? "border-warn/50" : "border-ok/50";
+    eff === "red"
+      ? "border-err/50 print:border-err"
+      : eff === "yellow"
+        ? "border-warn/50 print:border-warn"
+        : "border-ok/50 print:border-ok";
 
   return (
     <div className="glass-card p-6 print:break-inside-avoid">
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
         {/* SLA 徽章 */}
         <div
-          className={`flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl border sm:h-20 sm:w-20 ${badge.box}`}
+          className={`flex h-16 w-16 shrink-0 flex-col items-center justify-center rounded-2xl border sm:h-20 sm:w-20 ${badge.box} verdict-pill verdict-pill--${eff} print:h-auto print:w-auto print:flex-row print:items-center print:gap-1.5 print:rounded-lg print:px-4 print:py-2`}
         >
-          <span className="h-2.5 w-2.5 rounded-full bg-current animate-pulse-dot print:animate-none" />
-          <span className="mt-1.5 text-xs font-semibold">{signalLabel[overall]}</span>
+          <span className="h-2.5 w-2.5 rounded-full bg-current animate-pulse-dot print:hidden" />
+          <span className="mt-1.5 text-xs font-semibold print:mt-0 print:text-lg print:leading-none">
+            {signalLabel[overall]}
+          </span>
         </div>
 
         {/* 总结论 */}
-        <div className={`min-w-0 flex-1 border-l-2 pl-4 ${verdictBorder}`}>
-          <h1 className="text-lg font-semibold text-hi sm:text-xl">
+        <div className={`min-w-0 flex-1 border-l-2 pl-4 ${verdictBorder} print:border-l-4`}>
+          <h1 className="text-lg font-semibold text-hi sm:text-xl print:text-xl">
             整体评估:{verdictTitle}
           </h1>
           <p className="mt-1.5 text-sm leading-relaxed text-mid">{verdictDetail}</p>

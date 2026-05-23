@@ -257,7 +257,13 @@ body {
    产出的是当前 DOM 的静态快照, 用户无法回改报告内容(数据由 reportId 固定)。
    ============================================================ */
 @media print {
-  /* 深空背景 / 极光 / 网格 / 星空 canvas 全部撤掉, 否则吃墨又看不清(黑边来源) */
+  /* 黑边根因: :root 的 color-scheme: dark 会让 PDF 渲染器把 @page 页边距与画布涂黑,
+     所以导出的 PDF 四周是黑框。打印态显式切回浅色, 页面四周才是白纸。 */
+  :root {
+    color-scheme: light !important;
+  }
+
+  /* 深空背景 / 极光 / 网格 / 星空 canvas 全部撤掉, 否则吃墨又看不清 */
   .space-bg::before,
   .space-bg::after,
   .aurora,
@@ -269,6 +275,7 @@ body {
   body {
     background: #fff !important;
     color: #0f172a !important;
+    color-scheme: light !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -364,5 +371,25 @@ body {
   /* 链接不必带下划线干扰阅读 */
   a {
     text-decoration: none !important;
+  }
+
+  /* 总结论徽章: 打印态实色填充 + 白字, 一眼可辨「优 / 警告 / 异常」。
+     须置于 .text-ok/.text-warn/.text-err 等覆盖规则之后,
+     才能以同级 !important「后置者胜」夺回白色文字。 */
+  .verdict-pill {
+    color: #fff !important;
+    border-style: solid !important;
+  }
+  .verdict-pill--green {
+    background: #15803d !important;
+    border-color: #15803d !important;
+  }
+  .verdict-pill--yellow {
+    background: #a16207 !important;
+    border-color: #a16207 !important;
+  }
+  .verdict-pill--red {
+    background: #b91c1c !important;
+    border-color: #b91c1c !important;
   }
 }

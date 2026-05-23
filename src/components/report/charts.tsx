@@ -64,7 +64,7 @@ export function LatencyScatter({
 }) {
   return (
     <ChartBox>
-      <ScatterChart margin={{ top: 8, right: 12, bottom: 4, left: -8 }}>
+      <ScatterChart margin={{ top: 8, right: 12, bottom: 4, left: 4 }}>
         <XAxis
           type="number"
           dataKey="i"
