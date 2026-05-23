@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import SpaceBackground from "@/components/SpaceBackground";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const jbmono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jbmono",
   display: "swap",
 });
 
@@ -40,8 +47,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="zh-CN" className={inter.variable}>
-      <body className="font-sans antialiased min-h-screen bg-bg text-ink-900">
+    <html lang="zh-CN" className={`${inter.variable} ${jbmono.variable}`}>
+      <body className="space-bg font-sans antialiased min-h-screen bg-base text-hi selection:bg-brand/40">
+        <SpaceBackground />
+        <div className="aurora" aria-hidden>
+          <span className="aurora__orb aurora__orb--1" />
+          <span className="aurora__orb aurora__orb--2" />
+          <span className="aurora__orb aurora__orb--3" />
+        </div>
         {children}
       </body>
     </html>

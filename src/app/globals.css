@@ -3,21 +3,366 @@
 @tailwind utilities;
 
 :root {
-  --color-brand: #1E5FFF;
-  --color-bg: #FAFBFD;
-  --color-ink-900: #0E1525;
-  --color-ink-500: #5B6478;
-  --color-ink-300: #9AA3B2;
-  --color-signal-ok: #16A34A;
-  --color-signal-warn: #F59E0B;
-  --color-signal-err: #DC2626;
+  color-scheme: dark;
 }
 
-html,
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background-color: var(--color-bg);
-  color: var(--color-ink-900);
+  background-color: #070b14;
+  color: #eaeef6;
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* 深空背景:固定网格 + 顶部蓝色辉光,放在最底层 */
+.space-bg::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 35%, transparent 80%);
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 0%, #000 35%, transparent 80%);
+}
+
+.space-bg::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(
+    70% 50% at 50% -10%,
+    rgba(59, 130, 246, 0.22) 0%,
+    rgba(59, 130, 246, 0.06) 35%,
+    transparent 70%
+  );
+}
+
+@layer components {
+  /* 主辉光按钮 */
+  .btn-glow {
+    @apply relative inline-flex items-center justify-center rounded-xl bg-brand-deep px-5 py-3 text-sm font-semibold text-white
+      shadow-glow transition-all duration-200 ease-spring
+      hover:-translate-y-0.5 hover:shadow-glow hover:brightness-110 active:translate-y-0;
+  }
+
+  /* 次级玻璃按钮 */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-semibold text-hi
+      backdrop-blur transition-all duration-200 ease-spring
+      hover:-translate-y-0.5 hover:border-brand/40 hover:bg-white/[0.06];
+  }
+
+  /* 玻璃卡片 */
+  .glass-card {
+    @apply rounded-2xl border border-white/[0.07] bg-card/70 backdrop-blur-sm shadow-card;
+  }
+}
+
+@layer utilities {
+  /* 渐变描边发光文字 */
+  .text-glow {
+    text-shadow: 0 0 32px rgba(96, 165, 250, 0.35);
+  }
+
+  /* 大数字渐变 */
+  .num-gradient {
+    @apply bg-gradient-to-b from-white to-brand-bright bg-clip-text text-transparent;
+  }
+
+  /* shimmer 描边线 */
+  .hairline {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(96, 165, 250, 0.5),
+      transparent
+    );
+  }
+}
+
+/* 自定义滚动条,贴合暗色 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #070b14;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2740;
+  border-radius: 9999px;
+  border: 2px solid #070b14;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3a5c;
+}
+
+/* 选区配色 */
+::selection {
+  background: rgba(59, 130, 246, 0.35);
+  color: #fff;
+}
+
+/* 极简动效:深空极光 —— 缓慢漂移的发光团,给页面"呼吸感"。
+   位于网格(z -2)与背景色之间(z -3),非常克制,不抢内容。 */
+.aurora {
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora__orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  will-change: transform;
+}
+.aurora__orb--1 {
+  width: 46vw;
+  height: 46vw;
+  max-width: 640px;
+  max-height: 640px;
+  top: -12vh;
+  left: -6vw;
+  opacity: 0.46;
+  background: radial-gradient(circle, #1e5fff 0%, transparent 70%);
+  animation: drift-1 22s ease-in-out infinite;
+}
+.aurora__orb--2 {
+  width: 40vw;
+  height: 40vw;
+  max-width: 560px;
+  max-height: 560px;
+  top: 6vh;
+  right: -12vw;
+  opacity: 0.34;
+  background: radial-gradient(circle, #22d3ee 0%, transparent 70%);
+  animation: drift-2 28s ease-in-out infinite;
+}
+.aurora__orb--3 {
+  width: 38vw;
+  height: 38vw;
+  max-width: 520px;
+  max-height: 520px;
+  bottom: -16vh;
+  left: 28vw;
+  opacity: 0.3;
+  background: radial-gradient(circle, #7c3aed 0%, transparent 70%);
+  animation: drift-3 34s ease-in-out infinite;
+}
+
+@keyframes drift-1 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(11vw, 7vh) scale(1.16);
+  }
+}
+@keyframes drift-2 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-10vw, 11vh) scale(1.12);
+  }
+}
+@keyframes drift-3 {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(9vw, -9vh) scale(1.18);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora__orb {
+    animation: none !important;
+  }
+}
+
+/* 厂商 logo 墙:无限横向跑马灯。
+   每行内容复制两份,平移 50% 实现无缝循环;两侧渐隐遮罩柔化边缘。
+   hover 整条时暂停滚动,单个 chip 另有提亮/上浮。 */
+.vendor-marquee {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+.vendor-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.vendor-track--left {
+  animation: vendor-scroll-left 38s linear infinite;
+}
+.vendor-track--right {
+  animation: vendor-scroll-right 46s linear infinite;
+}
+.vendor-marquee:hover .vendor-track {
+  animation-play-state: paused;
+}
+
+@keyframes vendor-scroll-left {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+@keyframes vendor-scroll-right {
+  from {
+    transform: translate3d(-50%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vendor-track {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   打印 / 导出 PDF —— 把暗色玻璃站点压成一份干净的白底油墨文档。
+   触发自报告页「打印 / 导出报告」: 渲染快照后调 window.print(),
+   产出的是当前 DOM 的静态快照, 用户无法回改报告内容(数据由 reportId 固定)。
+   ============================================================ */
+@media print {
+  /* 深空背景 / 极光 / 网格 / 星空 canvas 全部撤掉, 否则吃墨又看不清(黑边来源) */
+  .space-bg::before,
+  .space-bg::after,
+  .aurora,
+  canvas {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* 玻璃卡片在纸上换成实线描边, 去掉模糊与阴影 */
+  .glass-card {
+    background: #fff !important;
+    border: 1px solid rgba(15, 23, 42, 0.14) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    break-inside: avoid;
+  }
+
+  /* ---- 文字墨色化 ----
+     暗色站点的文字色都是为深底设计的浅色(text-hi 近白), 直接打到白纸上=隐形。
+     这里把语义文字色全部映射到油墨可读的深色梯度。Tailwind utilities 在文件顶部注入,
+     本块在文件末尾, 同特异性下后者胜; 仍加 !important 兜底透明度变体。 */
+  .text-hi {
+    color: #0f172a !important;
+  }
+  .text-mid {
+    color: #334155 !important;
+  }
+  .text-lo {
+    color: #475569 !important;
+  }
+  .text-brand-bright,
+  .text-brand,
+  .text-brand-deep {
+    color: #1d4ed8 !important;
+  }
+  /* 信号色: 黄色在白纸上几乎不可读 -> 压到 amber-700; 红绿同样加深 */
+  .text-ok {
+    color: #15803d !important;
+  }
+  .text-warn {
+    color: #a16207 !important;
+  }
+  .text-err {
+    color: #b91c1c !important;
+  }
+
+  /* 信号圆点(实色 bg)同步加深, 保证黑白与彩印都看得见 */
+  .bg-ok {
+    background-color: #16a34a !important;
+  }
+  .bg-warn {
+    background-color: #ca8a04 !important;
+  }
+  .bg-err {
+    background-color: #dc2626 !important;
+  }
+  .bg-lo {
+    background-color: #94a3b8 !important;
+  }
+
+  /* 大数字渐变在油墨下会变透明 —— 强制回深色 */
+  .num-gradient {
+    -webkit-text-fill-color: #0f172a !important;
+    color: #0f172a !important;
+    background: none !important;
+  }
+  .text-glow {
+    text-shadow: none !important;
+  }
+
+  /* 维度卡展开态的内层底色(为深底设计的 white/[0.015] 等)在白纸上无意义, 清掉避免发灰 */
+  .glass-card .border-t {
+    background: transparent !important;
+  }
+
+  /* Recharts 用 SVG inline 上色, 为深底挑的浅色在白纸上偏淡。
+     CSS 可覆盖 SVG presentation 属性 -> 把图表文字与参考线压深一档。 */
+  .recharts-text,
+  .recharts-label,
+  .recharts-cartesian-axis-tick-value tspan {
+    fill: #334155 !important;
+  }
+  .recharts-reference-line line {
+    stroke: #a16207 !important;
+  }
+  .recharts-cartesian-grid line {
+    stroke: rgba(15, 23, 42, 0.1) !important;
+  }
+
+  /* A4 + 收紧页边距, 页眉页脚交给报告页自绘的 PrintHeader/PrintFooter */
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  /* 链接不必带下划线干扰阅读 */
+  a {
+    text-decoration: none !important;
+  }
 }
