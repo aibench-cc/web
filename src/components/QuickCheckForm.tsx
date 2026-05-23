@@ -276,7 +276,7 @@ export default function QuickCheckForm() {
               className="w-full appearance-none rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 pr-9 text-sm font-mono text-hi transition-colors focus:border-brand/60 focus:outline-none focus:ring-2 focus:ring-brand/20"
             >
               {models.map((m) => (
-                <option key={m} value={m}>
+                <option key={m} value={m} className="bg-base text-hi">
                   {m}
                 </option>
               ))}
