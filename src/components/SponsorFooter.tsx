@@ -44,7 +44,7 @@ export default function SponsorFooter() {
             />
             <span className="text-hi">访问 modelboxs.com</span>
           </a>
-          <div className="flex gap-5">
+          <div className="flex flex-wrap gap-x-5 gap-y-2 md:justify-end">
             <Link href="/" className="transition-colors hover:text-hi">
               首页
             </Link>
@@ -62,6 +62,12 @@ export default function SponsorFooter() {
             </a>
             <Link href="/about" className="transition-colors hover:text-hi">
               关于
+            </Link>
+            <Link href="/privacy" className="transition-colors hover:text-hi">
+              隐私
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-hi">
+              条款
             </Link>
           </div>
           <p className="text-xs text-lo">
