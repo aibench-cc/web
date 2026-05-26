@@ -59,6 +59,7 @@ export default function QuickCheckForm() {
   const [hint, setHint] = useState<string | null>(null);
   const [mode, setMode] = useState<Mode>("latency");
   const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [claudeCode, setClaudeCode] = useState(false);
   const [total, setTotal] = useState(20);
   const [concurrency, setConcurrency] = useState(5);
   const [durationSeconds, setDurationSeconds] = useState(30);
@@ -92,6 +93,7 @@ export default function QuickCheckForm() {
           protocol,
           base_url: baseUrl.trim() || null,
           api_key: apiKey,
+          claude_code: claudeCode,
         }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -136,6 +138,7 @@ export default function QuickCheckForm() {
           api_key: apiKey,
           model: model.trim(),
           mode: "latency",
+          claude_code: claudeCode,
           opts: { total, concurrency },
         }),
       });
@@ -248,6 +251,48 @@ export default function QuickCheckForm() {
           <ShieldCheck className="h-3.5 w-3.5 text-ok" />
           仅本次转发，不落库、不记录日志。
         </p>
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label
+          className={`flex cursor-pointer items-center justify-between rounded-xl border px-3.5 py-2.5 transition-colors ${
+            claudeCode
+              ? "border-brand/60 bg-brand/[0.08]"
+              : "border-white/10 bg-white/[0.03] hover:border-white/20"
+          } ${protocol !== "anthropic" ? "cursor-not-allowed opacity-50" : ""}`}
+        >
+          <div className="flex flex-col gap-0.5">
+            <span className={`text-sm font-medium ${claudeCode ? "text-brand-bright" : "text-hi"}`}>
+              Claude Code 限制专属
+            </span>
+            <span className="text-xs text-lo">
+              key 只接受 Claude Code 客户端时打开;以 CLI 身份发起请求。
+            </span>
+          </div>
+          <input
+            type="checkbox"
+            checked={claudeCode && protocol === "anthropic"}
+            disabled={protocol !== "anthropic"}
+            onChange={(e) => setClaudeCode(e.target.checked)}
+            className="sr-only"
+            aria-label="Claude Code 限制专属"
+          />
+          <span
+            className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${
+              claudeCode && protocol === "anthropic" ? "bg-brand" : "bg-white/15"
+            }`}
+            aria-hidden
+          >
+            <span
+              className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+                claudeCode && protocol === "anthropic" ? "translate-x-4" : "translate-x-0.5"
+              }`}
+            />
+          </span>
+        </label>
+        {protocol !== "anthropic" && (
+          <p className="text-xs text-lo">仅 Anthropic 协议生效。切换协议后此项自动忽略。</p>
+        )}
       </div>
 
       <div className="flex flex-col gap-2">

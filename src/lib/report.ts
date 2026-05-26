@@ -67,6 +67,7 @@ export type ReportMeta = {
   checkedAt: string; // 本地可读时间
   sampleCount: number;
   durationSec: number;
+  claudeCode?: boolean; // 是否以 Claude Code CLI 身份测试
 };
 
 export type Report = {

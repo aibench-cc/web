@@ -73,6 +73,17 @@ export default function ReportHeader({
         <Meta k="样本" v={`${meta.sampleCount} 次`} />
         <Sep />
         <Meta k="用时" v={`${meta.durationSec}s`} />
+        {meta.claudeCode && (
+          <>
+            <Sep />
+            <span
+              className="inline-flex items-center gap-1 rounded-md border border-brand/30 bg-brand/[0.08] px-1.5 py-0.5 text-xs font-medium text-brand-bright print:border-black/40 print:bg-transparent print:text-black"
+              title="本次检测以 Claude Code CLI 客户端身份发起请求"
+            >
+              Claude Code 限制专属
+            </span>
+          </>
+        )}
       </div>
 
       {/* 操作条(打印态隐藏) */}
