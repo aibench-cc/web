@@ -30,9 +30,10 @@ yarn-error.log*
 # vercel
 .vercel
 
-# cloudflare pages
+# dev logs
 .wrangler/
 .npm-install.log
+.next-dev.log
 
 # typescript
 *.tsbuildinfo
