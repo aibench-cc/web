@@ -49,6 +49,67 @@ const modeMeta: Record<Mode, { label: string; desc: string }> = {
   },
 };
 
+type FriendlyError = { title: string; hint?: string; action?: string; raw?: string };
+
+function friendlyRunError(raw: string | null | undefined): FriendlyError {
+  if (!raw) return { title: "检测未通过", action: "请检查渠道信息后重试。" };
+  const m = raw;
+  if (/HTTP 40[13]\b|invalid[_ ]api[_ ]key|unauthorized|authentication/i.test(m)) {
+    return {
+      title: "API key 无效或无权限",
+      hint: "上游拒绝了这把 key。",
+      action: "确认 key 拼写,或在原厂控制台检查 key 是否仍有效、是否对所选模型开放。",
+      raw,
+    };
+  }
+  if (/HTTP 429\b|rate.?limit|too.?many.?requests|quota/i.test(m)) {
+    return {
+      title: "触发上游限流或配额不足",
+      hint: "测试触发了厂商的 RPM/TPM 限制,或账户额度耗尽。",
+      action: "等 1–5 分钟再试,或在 Advanced 里把 concurrency 调小;额度不足请在原厂续费。",
+      raw,
+    };
+  }
+  if (/HTTP 50[234]\b|service.?unavailable|bad.?gateway|gateway.?timeout/i.test(m)) {
+    return {
+      title: "上游服务暂时不可用",
+      hint: "不是你 key 的问题,上游(或中转网关)正在返回 5xx。",
+      action: "过几分钟重试;若持续不可用,可能要换一个中转渠道。",
+      raw,
+    };
+  }
+  if (/HTTP 500\b|internal.?server.?error/i.test(m)) {
+    return {
+      title: "上游内部错误",
+      hint: "上游返回了 500,通常是上游服务自己的 bug。",
+      action: "稍后重试;若反复出现,反馈给上游/中转方。",
+      raw,
+    };
+  }
+  if (/HTTP 404\b|model.?not.?found|does.?not.?exist|no.?such.?model/i.test(m)) {
+    return {
+      title: "模型名不正确",
+      hint: "上游没有这个模型 id。",
+      action: "重新点 “拉取模型” 按钮从列表里选一个,或确认拼写。",
+      raw,
+    };
+  }
+  if (/timeout|timed.?out|connection.?(refused|reset|aborted)|ENOTFOUND|ECONNREFUSED|getaddrinfo/i.test(m)) {
+    return {
+      title: "无法连接上游",
+      hint: "base_url 可能写错,或网络/VPN 不通。",
+      action: "确认 base_url(如 https://api.openai.com/v1),海外服务可能需要走代理。",
+      raw,
+    };
+  }
+  return {
+    title: "检测未通过",
+    hint: m.length > 160 ? m.slice(0, 160) + "…" : m,
+    action: "请检查渠道信息后重试。",
+    raw,
+  };
+}
+
 export default function QuickCheckForm() {
   const [protocol, setProtocol] = useState<ProtocolId>("openai");
   const [baseUrl, setBaseUrl] = useState("");
@@ -455,11 +516,26 @@ export default function QuickCheckForm() {
         </div>
       )}
 
-      {runError && (
-        <p className="rounded-lg border border-warn/30 bg-warn/[0.08] px-3 py-2 text-xs leading-relaxed text-warn">
-          {runError}
-        </p>
-      )}
+      {runError && (() => {
+        const e = friendlyRunError(runError);
+        return (
+          <div className="rounded-lg border border-warn/30 bg-warn/[0.08] px-3.5 py-3 text-xs leading-relaxed text-warn">
+            <div className="text-sm font-semibold">{e.title}</div>
+            {e.hint && <div className="mt-1.5 text-warn/90">{e.hint}</div>}
+            {e.action && <div className="mt-1 text-warn/80">建议:{e.action}</div>}
+            {e.raw && (
+              <details className="mt-2">
+                <summary className="cursor-pointer text-[11px] text-warn/60 hover:text-warn/80 select-none">
+                  显示原始报错
+                </summary>
+                <pre className="mt-1.5 whitespace-pre-wrap break-all rounded bg-black/20 px-2 py-1.5 text-[11px] text-warn/70">
+                  {e.raw}
+                </pre>
+              </details>
+            )}
+          </div>
+        );
+      })()}
 
       {!isQuick && !submitting && (
         <p className="text-center text-xs text-lo">

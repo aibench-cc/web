@@ -101,6 +101,9 @@ export default function ReportHeader({
           重新检测
         </button>
       </div>
+      <p className="mt-2.5 text-[11px] leading-relaxed text-lo print:hidden">
+        分享链接短期有效;若需长期留存,请用上面的“打印 / 导出报告”保存 PDF。
+      </p>
     </div>
   );
 }
