@@ -52,10 +52,10 @@ export default function TopStatusBar() {
   }, []);
 
   return (
-    <div className="border-b border-white/[0.05] bg-base/80 backdrop-blur-xl print:hidden">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-1.5 text-[11px] text-lo">
-        <div className="flex items-center gap-3 overflow-x-auto">
-          <span className="hidden text-lo sm:inline">上游状态</span>
+    <div className="sticky top-0 z-[60] border-b border-white/[0.05] bg-base/85 backdrop-blur-xl print:hidden">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-2 text-xs text-mid">
+        <div className="flex items-center gap-4 overflow-x-auto">
+          <span className="hidden font-medium text-mid sm:inline">上游状态</span>
           {data.providers.map((p) => (
             <span
               key={p.key}
@@ -63,13 +63,13 @@ export default function TopStatusBar() {
               title={p.summary}
             >
               <span
-                className={`h-1.5 w-1.5 rounded-full ${dotClass[p.signal]} ${
+                className={`h-2 w-2 rounded-full ${dotClass[p.signal]} ${
                   p.signal === "operational" ? "animate-pulse-dot" : ""
                 }`}
               />
-              <span className="text-mid">{p.label}</span>
+              <span className="font-medium text-hi">{p.label}</span>
               <span className="text-lo">·</span>
-              <span className="text-lo">{signalText[p.signal]}</span>
+              <span className="text-mid">{signalText[p.signal]}</span>
             </span>
           ))}
         </div>

@@ -123,7 +123,7 @@ export default async function HomePage() {
 
 function Header() {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-base/70 backdrop-blur-xl">
+    <header className="sticky top-9 z-50 border-b border-white/[0.06] bg-base/70 backdrop-blur-xl">
       <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Image
