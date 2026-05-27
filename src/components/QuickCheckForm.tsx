@@ -14,6 +14,16 @@ const protocols = [
 ] as const;
 
 type ProtocolId = (typeof protocols)[number]["id"];
+
+const DOMESTIC_PRESETS: { label: string; protocol: ProtocolId; baseUrl: string }[] = [
+  { label: "DeepSeek", protocol: "openai", baseUrl: "https://api.deepseek.com" },
+  { label: "Kimi", protocol: "openai", baseUrl: "https://api.moonshot.cn/v1" },
+  { label: "智谱 GLM", protocol: "openai", baseUrl: "https://open.bigmodel.cn/api/paas/v4" },
+  { label: "通义 Qwen", protocol: "openai", baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1" },
+  { label: "豆包", protocol: "openai", baseUrl: "https://ark.cn-beijing.volces.com/api/v3" },
+  { label: "混元", protocol: "openai", baseUrl: "https://api.hunyuan.cloud.tencent.com/v1" },
+];
+
 type FetchState = "idle" | "loading" | "loaded" | "error";
 
 type RunState = "queued" | "running" | "done" | "error";
@@ -280,6 +290,36 @@ export default function QuickCheckForm() {
       </fieldset>
 
       <div className="flex flex-col gap-2">
+        <span className="text-xs text-lo">国产厂商预设(一键填 base_url)</span>
+        <div className="flex flex-wrap gap-1.5">
+          {DOMESTIC_PRESETS.map((p) => {
+            const active = baseUrl === p.baseUrl && protocol === p.protocol;
+            return (
+              <button
+                key={p.label}
+                type="button"
+                onClick={() => {
+                  setProtocol(p.protocol);
+                  setBaseUrl(p.baseUrl);
+                  setModel("");
+                  setModels([]);
+                  setState("idle");
+                  setHint(null);
+                }}
+                className={`rounded-lg border px-2.5 py-1.5 text-xs transition-colors ${
+                  active
+                    ? "border-brand/60 bg-brand/[0.12] text-brand-bright"
+                    : "border-white/10 bg-white/[0.04] text-mid hover:border-brand/40 hover:bg-brand/[0.08] hover:text-brand-bright"
+                }`}
+              >
+                {p.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
         <label htmlFor="base_url" className="text-sm font-medium text-hi">
           base_url <span className="text-lo font-normal">(留空走官方)</span>
         </label>
@@ -303,7 +343,14 @@ export default function QuickCheckForm() {
           name="api_key"
           type="password"
           value={apiKey}
-          onChange={(e) => setApiKey(e.target.value)}
+          onChange={(e) => {
+            const v = e.target.value;
+            setApiKey(v);
+            if (/^sk-ant-oat-/.test(v.trim())) {
+              setProtocol("anthropic");
+              setClaudeCode(true);
+            }
+          }}
           placeholder="sk-..."
           autoComplete="off"
           className={inputClass}
