@@ -17,6 +17,7 @@ import {
 import SponsorFooter from "@/components/SponsorFooter";
 import QuickCheckForm from "@/components/QuickCheckForm";
 import VendorMarquee, { type Vendor } from "@/components/VendorMarquee";
+import { fetchStats, seedStats } from "@/lib/api";
 
 type Dimension = {
   icon: React.ComponentType<{ className?: string }>;
@@ -101,12 +102,13 @@ const leaderboard: LeaderRow[] = [
   { rank: 7, channel: "cheap-relay", model: "gpt-4o", p95: "2.04s", hit: "12%", purity: "降级", cost: "1.74x", grade: "C" },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const stats = await fetchStats().catch(() => seedStats);
   return (
     <>
       <Header />
       <main>
-        <Hero />
+        <Hero checks={stats.channels} />
         <StatBand />
         <LeaderboardPreview />
         <HowItWorks />
@@ -157,7 +159,7 @@ function Header() {
   );
 }
 
-function Hero() {
+function Hero({ checks }: { checks: number }) {
   return (
     <section
       id="check"
@@ -178,7 +180,7 @@ function Hero() {
         <p className="max-w-md text-base lg:text-lg text-mid leading-relaxed">
           一次检测，验证延迟 / 缓存 / 模型纯度 / 限流 —— OpenAI · Anthropic · Gemini · 国产协议通用。
         </p>
-        <TrustRow />
+        <TrustRow checks={checks} />
         <HomeStatsPanel />
       </div>
       <div className="lg:col-span-7 animate-fade-up [animation-delay:120ms]">
@@ -188,9 +190,7 @@ function Hero() {
   );
 }
 
-function TrustRow() {
-  // TODO(B5): 接 /api/stats 真实数据,目前为种子数。等持久化上线后切真值。
-  const checks = 1248;
+function TrustRow({ checks }: { checks: number }) {
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-lo">
       <span className="inline-flex items-center gap-1.5">
