@@ -74,7 +74,7 @@ export async function fetchLeaderboard(
 
 export async function fetchStats(): Promise<Stats> {
   try {
-    return await getJson<Stats>("/api/stats", { next: { revalidate: 300 } });
+    return await getJson<Stats>("/api/stats", { next: { revalidate: 60 } });
   } catch {
     return seedStats;
   }

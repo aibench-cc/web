@@ -102,6 +102,8 @@ const leaderboard: LeaderRow[] = [
   { rank: 7, channel: "cheap-relay", model: "gpt-4o", p95: "2.04s", hit: "12%", purity: "降级", cost: "1.74x", grade: "C" },
 ];
 
+export const revalidate = 60;
+
 export default async function HomePage() {
   const stats = await fetchStats().catch(() => seedStats);
   return (
