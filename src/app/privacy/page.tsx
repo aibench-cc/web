@@ -35,7 +35,7 @@ export default function PrivacyPage() {
               <strong className="text-hi"> 不写日志、不入数据库、不缓存。</strong>
             </li>
             <li>
-              开源仓库 <a href="https://github.com/aibench-cc/api" target="_blank" rel="noopener" className="text-brand-bright underline-offset-4 hover:underline">aibench-cc/api</a> 的核心逻辑公开,后端处理 key 的代码可被任何人审计。
+              前端检测逻辑在 <a href="https://github.com/aibench-cc/web" target="_blank" rel="noopener" className="text-brand-bright underline-offset-4 hover:underline">aibench-cc/web</a> 开源,你可以亲自检查 key 是如何被收集、转发与丢弃的。
             </li>
             <li>
               即便如此,key 一旦经过第三方网络就有暴露风险。强烈建议:
@@ -123,7 +123,7 @@ export default function PrivacyPage() {
         <Section title="七、你的权利">
           <ul className="ml-5 list-disc space-y-2">
             <li>
-              <strong className="text-hi">删除某次报告</strong>:发邮件到 <a href="mailto:privacy@aibench.cc" className="text-brand-bright underline-offset-4 hover:underline">privacy@aibench.cc</a> 并附上 reportId,我们会在 7 个工作日内删除该报告及对应榜单条目。
+              <strong className="text-hi">删除某次报告</strong>:发邮件到 <a href="mailto:zhuyiwen00@gmail.com" className="text-brand-bright underline-offset-4 hover:underline">zhuyiwen00@gmail.com</a> 并附上 reportId,我们会在 7 个工作日内删除该报告及对应榜单条目。
             </li>
             <li>
               <strong className="text-hi">导出你的数据</strong>:同上邮箱,我们会以 JSON 形式发回与该 reportId 相关的全部聚合数据。
@@ -142,7 +142,7 @@ export default function PrivacyPage() {
 
         <Section title="九、联系">
           <p>
-            隐私相关问题:<a href="mailto:privacy@aibench.cc" className="text-brand-bright underline-offset-4 hover:underline">privacy@aibench.cc</a>
+            隐私相关问题:<a href="mailto:zhuyiwen00@gmail.com" className="text-brand-bright underline-offset-4 hover:underline">zhuyiwen00@gmail.com</a>
           </p>
           <p>
             其他问题或 issue:<a href="https://github.com/aibench-cc" target="_blank" rel="noopener" className="text-brand-bright underline-offset-4 hover:underline">github.com/aibench-cc</a>

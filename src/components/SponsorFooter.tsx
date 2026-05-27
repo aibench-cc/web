@@ -69,6 +69,12 @@ export default function SponsorFooter() {
             <Link href="/terms" className="transition-colors hover:text-hi">
               条款
             </Link>
+            <a
+              href="mailto:zhuyiwen00@gmail.com"
+              className="transition-colors hover:text-hi"
+            >
+              联系
+            </a>
           </div>
           <p className="text-xs text-lo">
             &copy; {new Date().getFullYear()} AIBench.cc · 开源 · 中立 · 多厂商

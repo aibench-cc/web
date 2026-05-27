@@ -121,7 +121,7 @@ export default function TermsPage() {
 
         <Section title="九、联系">
           <p>
-            条款相关问询:<a href="mailto:legal@aibench.cc" className="text-brand-bright underline-offset-4 hover:underline">legal@aibench.cc</a>
+            条款相关问询:<a href="mailto:zhuyiwen00@gmail.com" className="text-brand-bright underline-offset-4 hover:underline">zhuyiwen00@gmail.com</a>
           </p>
           <p>
             其他:<a href="https://github.com/aibench-cc" target="_blank" rel="noopener" className="text-brand-bright underline-offset-4 hover:underline">github.com/aibench-cc</a>
