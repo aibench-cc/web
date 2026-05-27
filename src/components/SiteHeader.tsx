@@ -19,6 +19,9 @@ export default function SiteHeader() {
           <Link href="/leaderboard" className="transition-colors hover:text-hi">
             行业榜
           </Link>
+          <Link href="/history" className="transition-colors hover:text-hi">
+            我的记录
+          </Link>
           <a
             href="https://github.com/aibench-cc"
             target="_blank"

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, RefreshCw, ChevronDown, Loader2 } from "lucide-react";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import { saveHistory } from "@/lib/history";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") || "http://localhost:8000";
@@ -245,6 +246,12 @@ export default function QuickCheckForm() {
       const final = await pollUntilSettled(jobId);
       if (final.state === "done") {
         // 报告已落库,reportId == jobId;保持 submitting 直到页面跳转完成
+        saveHistory({
+          reportId: jobId,
+          ts: Math.floor(Date.now() / 1000),
+          protocol,
+          model: model.trim(),
+        });
         router.push(`/r/${jobId}`);
         return;
       }
