@@ -80,6 +80,7 @@ export default function ReportView({ report }: { report: Report }) {
           verdictTitle={report.verdictTitle}
           verdictDetail={report.verdictDetail}
           meta={report.meta}
+          dimensions={report.dimensions}
           onPrint={() => setShowSelector(true)}
           onShare={handleShare}
           onRecheck={() => router.push("/#check")}

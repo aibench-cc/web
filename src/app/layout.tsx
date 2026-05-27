@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SpaceBackground from "@/components/SpaceBackground";
+import TopStatusBar from "@/components/TopStatusBar";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -55,6 +56,7 @@ export default function RootLayout({
           <span className="aurora__orb aurora__orb--2" />
           <span className="aurora__orb aurora__orb--3" />
         </div>
+        <TopStatusBar />
         {children}
       </body>
     </html>

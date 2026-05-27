@@ -168,22 +168,53 @@ function Hero() {
           <span className="h-1.5 w-1.5 rounded-full bg-brand-bright animate-pulse-dot" />
           开源 · 中立 · 多厂商
         </span>
-        <h1 className="text-5xl lg:text-6xl font-semibold tracking-tight leading-[1.05]">
-          <span className="text-hi">你拿到的，</span>
+        <h1 className="text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.1]">
+          <span className="text-hi">你买的是</span>
+          <span className="num-gradient text-glow">Opus 4.7</span>
+          <span className="text-hi">，</span>
           <br />
-          <span className="text-hi">真的是</span>
-          <span className="num-gradient text-glow">那个模型</span>
-          <span className="text-hi">吗？</span>
+          <span className="text-hi">跑出来真的是 Opus 4.7 吗？</span>
         </h1>
         <p className="max-w-md text-base lg:text-lg text-mid leading-relaxed">
-          粘贴一个 key，30 秒验明渠道有没有偷偷降级、限流、加价 —— 延迟、缓存、纯度、真实成本，一次看清。
+          一次检测，验证延迟 / 缓存 / 模型纯度 / 限流 —— OpenAI · Anthropic · Gemini · 国产协议通用。
         </p>
+        <TrustRow />
         <HomeStatsPanel />
       </div>
       <div className="lg:col-span-7 animate-fade-up [animation-delay:120ms]">
         <QuickCheckForm />
       </div>
     </section>
+  );
+}
+
+function TrustRow() {
+  // TODO(B5): 接 /api/stats 真实数据,目前为种子数。等持久化上线后切真值。
+  const checks = 1248;
+  return (
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-lo">
+      <span className="inline-flex items-center gap-1.5">
+        <span className="h-1.5 w-1.5 rounded-full bg-ok animate-pulse-dot" />
+        已为开发者检测
+        <span className="font-mono font-semibold text-hi">{checks.toLocaleString()}</span>
+        次
+      </span>
+      <span className="text-white/15">·</span>
+      <span className="inline-flex items-center gap-1">
+        <ShieldCheck className="h-3.5 w-3.5 text-ok" />
+        key 不落盘
+      </span>
+      <span className="text-white/15">·</span>
+      <a
+        href="https://github.com/aibench-cc"
+        target="_blank"
+        rel="noopener"
+        className="inline-flex items-center gap-1 transition-colors hover:text-brand-bright"
+      >
+        <Github className="h-3.5 w-3.5" />
+        开源可审计
+      </a>
+    </div>
   );
 }
 

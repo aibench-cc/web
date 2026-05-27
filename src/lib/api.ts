@@ -79,3 +79,38 @@ export async function fetchStats(): Promise<Stats> {
     return seedStats;
   }
 }
+
+// ---- 上游官方状态聚合(OpenAI / Anthropic / Gemini) ----
+
+export type ProviderSignal = "operational" | "degraded" | "outage" | "unknown";
+
+export type ProviderStatusRow = {
+  key: string;
+  label: string;
+  signal: ProviderSignal;
+  summary: string;
+};
+
+export type UpstreamStatus = {
+  providers: ProviderStatusRow[];
+  updatedAt: number;
+  stale: boolean;
+};
+
+export const seedStatus: UpstreamStatus = {
+  providers: [
+    { key: "openai", label: "OpenAI", signal: "unknown", summary: "暂时无法读取状态" },
+    { key: "anthropic", label: "Anthropic", signal: "unknown", summary: "暂时无法读取状态" },
+    { key: "gemini", label: "Gemini", signal: "unknown", summary: "暂时无法读取状态" },
+  ],
+  updatedAt: 0,
+  stale: true,
+};
+
+export async function fetchUpstreamStatus(): Promise<UpstreamStatus> {
+  try {
+    return await getJson<UpstreamStatus>("/api/status", { cache: "no-store" });
+  } catch {
+    return seedStatus;
+  }
+}

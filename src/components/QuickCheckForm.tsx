@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, RefreshCw, ChevronDown, Loader2 } from "lucide-react";
+import TurnstileWidget from "@/components/TurnstileWidget";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") || "http://localhost:8000";
@@ -22,6 +23,25 @@ const DOMESTIC_PRESETS: { label: string; protocol: ProtocolId; baseUrl: string }
   { label: "通义 Qwen", protocol: "openai", baseUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1" },
   { label: "豆包", protocol: "openai", baseUrl: "https://ark.cn-beijing.volces.com/api/v3" },
   { label: "混元", protocol: "openai", baseUrl: "https://api.hunyuan.cloud.tencent.com/v1" },
+];
+
+type ModelChip = { label: string; protocol: ProtocolId; modelId: string; isNew?: boolean };
+
+const MODEL_CHIPS: ModelChip[] = [
+  // OpenAI 兼容
+  { label: "GPT 5.5", protocol: "openai", modelId: "gpt-5.5", isNew: true },
+  { label: "GPT 5.4", protocol: "openai", modelId: "gpt-5.4" },
+  { label: "GPT 4o", protocol: "openai", modelId: "gpt-4o" },
+  { label: "o3-mini", protocol: "openai", modelId: "o3-mini" },
+  // Anthropic
+  { label: "Opus 4.7", protocol: "anthropic", modelId: "claude-opus-4-7", isNew: true },
+  { label: "Sonnet 4.6", protocol: "anthropic", modelId: "claude-sonnet-4-6" },
+  { label: "Haiku 4.5", protocol: "anthropic", modelId: "claude-haiku-4-5" },
+  { label: "Opus 4.5", protocol: "anthropic", modelId: "claude-opus-4-5" },
+  // Gemini
+  { label: "Gemini 3.1 Pro", protocol: "gemini", modelId: "gemini-3.1-pro", isNew: true },
+  { label: "Gemini 2.5 Pro", protocol: "gemini", modelId: "gemini-2.5-pro" },
+  { label: "Gemini 2.5 Flash", protocol: "gemini", modelId: "gemini-2.5-flash" },
 ];
 
 type FetchState = "idle" | "loading" | "loaded" | "error";
@@ -141,6 +161,8 @@ export default function QuickCheckForm() {
   const [submitting, setSubmitting] = useState(false);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
+  const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
   const isQuick = mode === "latency";
   const estSeconds = isQuick ? 30 : durationSeconds;
@@ -196,6 +218,10 @@ export default function QuickCheckForm() {
       setRunError("请先选择或手动输入 model id。");
       return;
     }
+    if (turnstileRequired && !turnstileToken) {
+      setRunError("请先完成人机验证。");
+      return;
+    }
     setRunError(null);
     setSubmitting(true);
     setProgress({ state: "queued", done: 0, total, phase: "初始化", message: null });
@@ -211,6 +237,7 @@ export default function QuickCheckForm() {
           mode: "latency",
           claude_code: claudeCode,
           opts: { total, concurrency },
+          turnstile_token: turnstileToken || null,
         }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -421,6 +448,37 @@ export default function QuickCheckForm() {
           </button>
         </div>
 
+        {(() => {
+          const chips = MODEL_CHIPS.filter((c) => c.protocol === protocol);
+          if (chips.length === 0) return null;
+          return (
+            <div className="flex flex-wrap gap-1.5">
+              {chips.map((c) => {
+                const active = model === c.modelId;
+                return (
+                  <button
+                    key={c.modelId}
+                    type="button"
+                    onClick={() => setModel(c.modelId)}
+                    className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs transition-colors ${
+                      active
+                        ? "border-brand/60 bg-brand/[0.12] text-brand-bright"
+                        : "border-white/10 bg-white/[0.04] text-mid hover:border-brand/40 hover:bg-brand/[0.08] hover:text-brand-bright"
+                    }`}
+                  >
+                    {c.label}
+                    {c.isNew && (
+                      <span className="rounded bg-brand/30 px-1 text-[9px] font-semibold leading-tight text-brand-bright">
+                        NEW
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })()}
+
         {models.length > 0 && (
           <div className="relative">
             <select
@@ -523,9 +581,11 @@ export default function QuickCheckForm() {
         )}
       </div>
 
+      <TurnstileWidget onToken={setTurnstileToken} />
+
       <button
         type="submit"
-        disabled={submitting || !isQuick}
+        disabled={submitting || !isQuick || (turnstileRequired && !turnstileToken)}
         className="btn-glow w-full !py-3.5 !text-base disabled:opacity-60 disabled:pointer-events-none"
       >
         {submitting ? (
