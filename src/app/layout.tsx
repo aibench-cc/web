@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import SpaceBackground from "@/components/SpaceBackground";
 import TopStatusBar from "@/components/TopStatusBar";
+
+const CF_ANALYTICS_TOKEN = "d2209cdd00e247378bf74ddf8658e9a0";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -58,6 +61,13 @@ export default function RootLayout({
         </div>
         <TopStatusBar />
         {children}
+        {process.env.NODE_ENV === "production" && (
+          <Script
+            src="https://static.cloudflareinsights.com/beacon.min.js"
+            strategy="lazyOnload"
+            data-cf-beacon={`{"token": "${CF_ANALYTICS_TOKEN}"}`}
+          />
+        )}
       </body>
     </html>
   );
