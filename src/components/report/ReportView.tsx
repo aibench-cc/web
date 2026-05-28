@@ -70,52 +70,60 @@ export default function ReportView({ report }: { report: Report }) {
   const forceExpand = printing && detail === "full";
 
   return (
-    <main className="mx-auto max-w-3xl px-6 pt-10 pb-8 print:max-w-none print:px-0 print:pt-0">
+    <main className="mx-auto max-w-6xl px-6 pt-10 pb-8 print:max-w-none print:px-0 print:pt-0">
       {/* 打印专属页眉(仅打印可见) */}
       <PrintHeader checkedAt={report.meta.checkedAt} />
 
-      <div className="flex flex-col gap-4">
-        <ReportHeader
-          overall={report.overall}
-          verdictTitle={report.verdictTitle}
-          verdictDetail={report.verdictDetail}
-          meta={report.meta}
-          dimensions={report.dimensions}
-          onPrint={() => setShowSelector(true)}
-          onShare={handleShare}
-          onRecheck={() => router.push("/#check")}
-          shareToast={shareToast}
-        />
-
-        <p className="px-1 pt-1 text-xs text-lo print:hidden">
-          下面是各维度的结论,点任意一张卡片可展开「这对你意味着什么」+ 专业判据与图表。
-        </p>
-
-        {dimOrder.map((k) => (
-          <DimensionCard
-            key={k}
-            dimKey={k}
-            icon={dimIcon[k]}
-            title={dimTitle[k]}
-            data={report.dimensions[k]}
-            open={expanded === k}
-            printing={forceExpand}
-            printIncluded={selection[k]}
-            onToggle={() =>
-              setExpanded((cur) => (cur === k ? null : k))
-            }
+      {/* 屏幕态: lg+ 两栏(左 sticky 顶结论 + 右滚动各维度),lg- 单列堆叠
+          打印态: 强制单列(print:block + print:gap-0) */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-6 print:!block">
+        {/* 左栏: 顶结论(桌面端 sticky;打印态正常流) */}
+        <div className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 print:max-h-none print:overflow-visible print:pr-0">
+          <ReportHeader
+            overall={report.overall}
+            verdictTitle={report.verdictTitle}
+            verdictDetail={report.verdictDetail}
+            meta={report.meta}
+            dimensions={report.dimensions}
+            onPrint={() => setShowSelector(true)}
+            onShare={handleShare}
+            onRecheck={() => router.push("/#check")}
+            shareToast={shareToast}
           />
-        ))}
+        </div>
 
-        <p className="mt-2 text-center text-xs text-lo">
-          判据全部公开,你可以自己复核 ·{" "}
-          <a
-            href="/about#methodology"
-            className="text-brand-bright transition-colors hover:text-hi print:hidden"
-          >
-            如何复核 →
-          </a>
-        </p>
+        {/* 右栏: 各维度明细 */}
+        <div className="flex flex-col gap-4 print:mt-4">
+          <p className="px-1 text-xs text-lo print:hidden">
+            下面是各维度的结论,点任意一张卡片可展开「这对你意味着什么」+ 专业判据与图表。
+          </p>
+
+          {dimOrder.map((k) => (
+            <DimensionCard
+              key={k}
+              dimKey={k}
+              icon={dimIcon[k]}
+              title={dimTitle[k]}
+              data={report.dimensions[k]}
+              open={expanded === k}
+              printing={forceExpand}
+              printIncluded={selection[k]}
+              onToggle={() =>
+                setExpanded((cur) => (cur === k ? null : k))
+              }
+            />
+          ))}
+
+          <p className="mt-2 text-center text-xs text-lo">
+            判据全部公开,你可以自己复核 ·{" "}
+            <a
+              href="/about#methodology"
+              className="text-brand-bright transition-colors hover:text-hi print:hidden"
+            >
+              如何复核 →
+            </a>
+          </p>
+        </div>
       </div>
 
       {/* 打印专属页脚(仅打印可见,含模盒 12px 赞助署名) */}
