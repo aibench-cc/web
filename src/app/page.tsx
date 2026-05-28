@@ -186,7 +186,7 @@ function Hero({ checks }: { checks: number }) {
           一次检测，验证延迟 / 缓存 / 模型纯度 / 限流 —— OpenAI · Anthropic · Gemini · 国产协议通用。
         </p>
         <TrustRow checks={checks} />
-        <HomeStatsPanel />
+        <HomeStatsPanel channels={checks} />
       </div>
       <div className="lg:col-span-7 animate-fade-up [animation-delay:120ms]">
         <QuickCheckForm />
@@ -223,7 +223,7 @@ function TrustRow({ checks }: { checks: number }) {
   );
 }
 
-function HomeStatsPanel() {
+function HomeStatsPanel({ channels }: { channels: number }) {
   const { A, B, C } = heroStats.grades;
   const sum = A + B + C || 1;
   const grades = [
@@ -249,7 +249,7 @@ function HomeStatsPanel() {
       <div className="flex items-end justify-between">
         <div>
           <div className="num-gradient text-glow font-mono text-4xl font-semibold tracking-tight">
-            {heroStats.channels.toLocaleString()}
+            {channels.toLocaleString()}
           </div>
           <div className="mt-1 text-sm text-mid">已检测 API 渠道</div>
         </div>
