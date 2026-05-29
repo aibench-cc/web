@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ClipboardCopy, X } from "lucide-react";
 import type { Report, Signal } from "@/lib/report";
-import { addCompareId, loadCompareIds, removeCompareId, saveCompareIds } from "@/lib/compare";
+import { loadCompareIds, removeCompareId, saveCompareIds } from "@/lib/compare";
 import { getDemoReport } from "@/lib/demoReports";
 import { signalLabel } from "@/lib/report";
 
@@ -116,19 +116,6 @@ export default function CompareTable({
             <CompareRow key={row.label} label={row.label} items={items} value={row.value} tone={row.tone} />
           ))}
         </div>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {["sample-yellow", "sample-green", "sample-red"].map((id) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setIds(addCompareId(id))}
-            className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-xs text-mid hover:text-hi"
-          >
-            加入 {id}
-          </button>
-        ))}
       </div>
     </section>
   );
