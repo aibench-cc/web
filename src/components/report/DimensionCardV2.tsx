@@ -13,6 +13,7 @@ export type ProbeItem = {
   weight: number;
   message: string;
   raw_trace?: unknown;
+  rawTrace?: unknown;
 };
 
 export type ProbeGroup = {
@@ -47,7 +48,7 @@ function SignalIcon({ signal }: { signal: ProbeSignal }) {
 
 export default function DimensionCardV2({ group }: { group: ProbeGroup }) {
   const [openProbe, setOpenProbe] = useState<string | null>(group.probes[0]?.name ?? null);
-  const percent = Math.round((group.score / group.maxScore) * 100);
+  const percent = group.maxScore > 0 ? Math.round((group.score / group.maxScore) * 100) : 0;
 
   return (
     <section className="glass-card overflow-hidden">
@@ -72,6 +73,7 @@ export default function DimensionCardV2({ group }: { group: ProbeGroup }) {
       <div className="divide-y divide-white/[0.05]">
         {group.probes.map((probe) => {
           const expanded = openProbe === probe.name;
+          const rawTrace = probe.raw_trace ?? probe.rawTrace;
           return (
             <div key={probe.name} className="px-4 py-3">
               <button
@@ -95,9 +97,9 @@ export default function DimensionCardV2({ group }: { group: ProbeGroup }) {
                 <ChevronDown className={`mt-1 h-4 w-4 shrink-0 text-lo transition-transform ${expanded ? "rotate-180" : ""}`} />
               </button>
 
-              {expanded && probe.raw_trace !== undefined && (
+              {expanded && rawTrace !== undefined && (
                 <div className="mt-3 pl-10">
-                  <RawTraceViewer title={`${probe.name} raw_trace`} trace={probe.raw_trace} />
+                  <RawTraceViewer title={`${probe.name} raw_trace`} trace={rawTrace} />
                 </div>
               )}
             </div>

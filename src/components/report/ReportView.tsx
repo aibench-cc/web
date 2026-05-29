@@ -14,6 +14,7 @@ import {
 import {
   type Report,
   type DimKey,
+  type ProbeResult,
   dimOrder,
   dimTitle,
 } from "@/lib/report";
@@ -22,6 +23,7 @@ import ReportHeader from "./ReportHeader";
 import ReportHeaderV2 from "./ReportHeaderV2";
 import DimensionCard from "./DimensionCard";
 import DimensionGroupV2, { type ProbeGroup } from "./DimensionGroupV2";
+import type { ProbeSignal } from "./DimensionCardV2";
 import PrintSelector, { type PrintDetail } from "./PrintSelector";
 
 const dimIcon: Record<DimKey, React.ComponentType<{ className?: string }>> = {
@@ -119,6 +121,98 @@ const v2ProbeGroups: ProbeGroup[] = [
   },
 ];
 
+type ProbeBucket = "A" | "B" | "C" | "D" | "E";
+
+const probeGroupMeta: Record<ProbeBucket, { key: string; title: string }> = {
+  A: { key: "protocol", title: "A. 协议根基" },
+  B: { key: "identity", title: "B. 模型身份" },
+  C: { key: "runtime", title: "C. 运行表现" },
+  D: { key: "cost-cache", title: "D. 成本缓存" },
+  E: { key: "source", title: "E. 渠道来源" },
+};
+
+function probeBucket(probe: ProbeResult): ProbeBucket {
+  for (const value of [probe.code, probe.name]) {
+    const head = value?.trim().match(/^[A-E]/i)?.[0]?.toUpperCase();
+    if (head === "A" || head === "B" || head === "C" || head === "D" || head === "E") {
+      return head;
+    }
+  }
+  return "C";
+}
+
+function probeDisplayName(probe: ProbeResult): string {
+  const code = probe.code?.trim();
+  const name = probe.name?.trim() || code || "未命名探针";
+  if (!code || name.toLowerCase().startsWith(code.toLowerCase())) return name;
+  return `${code} ${name}`;
+}
+
+function normalizeProbeSignal(signal: ProbeResult["signal"]): ProbeSignal {
+  if (signal === "green" || signal === "yellow" || signal === "red" || signal === "na") {
+    return signal;
+  }
+  return "na";
+}
+
+function normalizeProbeWeight(weight: ProbeResult["weight"]): number {
+  return typeof weight === "number" && Number.isFinite(weight) ? Math.max(0, weight) : 0;
+}
+
+function probeScore(signal: ProbeSignal, weight: number): number {
+  if (signal === "green") return weight;
+  if (signal === "yellow") return Math.round(weight * 0.5);
+  return 0;
+}
+
+function probeGroupSummary(probes: Array<{ signal: ProbeSignal }>) {
+  const red = probes.filter((probe) => probe.signal === "red").length;
+  const yellow = probes.filter((probe) => probe.signal === "yellow").length;
+  if (red > 0) return `${probes.length} 个真实探针已接入,其中 ${red} 个异常、${yellow} 个需注意。`;
+  if (yellow > 0) return `${probes.length} 个真实探针已接入,其中 ${yellow} 个需注意。`;
+  return `${probes.length} 个真实探针已接入,本组未发现异常信号。`;
+}
+
+function probeGroupsFromReport(probes?: ProbeResult[]): ProbeGroup[] {
+  if (!probes?.length) return v2ProbeGroups;
+
+  const grouped = new Map<ProbeBucket, ProbeGroup["probes"]>();
+  for (const probe of probes) {
+    const signal = normalizeProbeSignal(probe.signal);
+    const weight = normalizeProbeWeight(probe.weight);
+    const bucket = probeBucket(probe);
+    const items = grouped.get(bucket) ?? [];
+    items.push({
+      name: probeDisplayName(probe),
+      signal,
+      weight,
+      message: probe.message || "已完成探针检测。",
+      raw_trace: probe.raw_trace ?? probe.rawTrace,
+    });
+    grouped.set(bucket, items);
+  }
+
+  return (["A", "B", "C", "D", "E"] as ProbeBucket[])
+    .map((bucket) => {
+      const probesInGroup = grouped.get(bucket) ?? [];
+      if (!probesInGroup.length) return null;
+      const meta = probeGroupMeta[bucket];
+      const maxScore = probesInGroup.reduce((sum, probe) => sum + probe.weight, 0);
+      return {
+        key: meta.key,
+        title: meta.title,
+        summary: probeGroupSummary(probesInGroup),
+        score: probesInGroup.reduce(
+          (sum, probe) => sum + probeScore(probe.signal, probe.weight),
+          0,
+        ),
+        maxScore,
+        probes: probesInGroup,
+      };
+    })
+    .filter((group): group is ProbeGroup => group !== null);
+}
+
 export default function ReportView({
   report,
   useV2Header = true,
@@ -133,6 +227,7 @@ export default function ReportView({
   const [selection, setSelection] = useState<Record<DimKey, boolean>>(allSelected);
   const [detail, setDetail] = useState<PrintDetail>("full");
   const [shareToast, setShareToast] = useState(false);
+  const v2Groups = probeGroupsFromReport(report.probes);
 
   // 打印流程: 勾选确认 -> 进入打印态(强制展开)-> 等渲染完触发原生打印 -> 打印结束复位
   useEffect(() => {
@@ -205,7 +300,7 @@ export default function ReportView({
           </p>
 
           {useV2Header ? (
-            <DimensionGroupV2 groups={v2ProbeGroups} />
+            <DimensionGroupV2 groups={v2Groups} />
           ) : (
             dimOrder.map((k) => (
               <DimensionCard

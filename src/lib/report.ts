@@ -60,6 +60,16 @@ export type DimensionResult = {
   provenanceSignals?: string[];
 };
 
+export type ProbeResult = {
+  code?: string | null;
+  name?: string | null;
+  signal?: Signal | "na" | null;
+  weight?: number | null;
+  message?: string | null;
+  raw_trace?: unknown;
+  rawTrace?: unknown;
+};
+
 export type ReportMeta = {
   protocol: Protocol;
   model: string;
@@ -77,6 +87,7 @@ export type Report = {
   verdictTitle: string; // 一句话总结论标题
   verdictDetail: string; // 副句
   dimensions: Record<DimKey, DimensionResult>;
+  probes?: ProbeResult[];
 };
 
 // ---------- 维度元信息(图标在组件层映射,这里只管标题/顺序) ----------
