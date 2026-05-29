@@ -5,7 +5,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SponsorFooter from "@/components/SponsorFooter";
 import ReportView from "@/components/report/ReportView";
 import { fetchReport } from "@/lib/api";
-import { seedReport, type Report, type Signal } from "@/lib/report";
+import { getDemoReport } from "@/lib/demoReports";
 
 // 单次检测快照 · 7 天 TTL · 内存丢失或 Railway 重启都会让报告不可达。
 // 此时不再静默回退到 demo seed(用户曾误以为「报告被篡改」),改为显式提示。
@@ -14,34 +14,6 @@ async function loadReport(reportId: string) {
   const demoReport = getDemoReport(reportId);
   if (demoReport) return demoReport;
   return await fetchReport(reportId);
-}
-
-function getDemoReport(reportId: string): Report | null {
-  if (reportId === "sample-yellow") {
-    return { ...seedReport, reportId };
-  }
-  if (reportId === "sample-green") {
-    return demoVariant(reportId, "green", "官方直连表现优秀", "这份示例用于验证旧版绿色报告视觉仍保持不变。");
-  }
-  if (reportId === "sample-red") {
-    return demoVariant(reportId, "red", "发现明显异常,不建议直接采购", "这份示例用于验证旧版红色报告视觉仍保持不变。");
-  }
-  return null;
-}
-
-function demoVariant(
-  reportId: string,
-  overall: Exclude<Signal, "skipped">,
-  verdictTitle: string,
-  verdictDetail: string,
-): Report {
-  return {
-    ...seedReport,
-    reportId,
-    overall,
-    verdictTitle,
-    verdictDetail,
-  };
 }
 
 export async function generateMetadata({
