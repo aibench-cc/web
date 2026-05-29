@@ -123,8 +123,8 @@ export default function ReportHeaderV2({
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-5">
-        <CopyToBossButton report={report} />
+      <div className="mt-5 grid grid-cols-2 gap-2">
+        <CopyToBossButton report={report} className="col-span-2" />
         {actionItems.map((item) => {
           const Icon = item.icon;
           return (

@@ -5,7 +5,13 @@ import { ClipboardCopy } from "lucide-react";
 import type { Report } from "@/lib/report";
 import { protocolLabel } from "@/lib/leaderboard";
 
-export default function CopyToBossButton({ report }: { report: Report }) {
+export default function CopyToBossButton({
+  report,
+  className = "",
+}: {
+  report: Report;
+  className?: string;
+}) {
   const [copied, setCopied] = useState(false);
   const summary = useMemo(() => buildBossSummary(report), [report]);
 
@@ -19,7 +25,7 @@ export default function CopyToBossButton({ report }: { report: Report }) {
     <button
       type="button"
       onClick={handleCopy}
-      className="btn-ghost h-10 !rounded-lg !px-2 !py-2 text-xs sm:text-sm"
+      className={`btn-ghost h-10 whitespace-nowrap !rounded-lg !px-2 !py-2 text-xs sm:text-sm ${className}`}
       title="复制 7 行以内的采购摘要"
     >
       <ClipboardCopy className="mr-1.5 h-4 w-4" />
