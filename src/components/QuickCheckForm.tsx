@@ -153,7 +153,7 @@ export default function QuickCheckForm() {
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [claudeCode, setClaudeCode] = useState(false);
   const [total, setTotal] = useState(20);
-  const [concurrency, setConcurrency] = useState(5);
+  const [concurrency, setConcurrency] = useState(8);
   const [durationSeconds, setDurationSeconds] = useState(30);
   const [targetRpm, setTargetRpm] = useState(60);
   const [targetTpm, setTargetTpm] = useState(20000);
