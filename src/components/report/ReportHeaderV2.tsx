@@ -2,13 +2,13 @@
 
 import {
   BadgeCheck,
-  ClipboardCopy,
   Download,
   GitCompare,
   Printer,
   RotateCw,
   Share2,
 } from "lucide-react";
+import CopyToBossButton from "@/components/CopyToBossButton";
 import SourceBadge, { type SourceKind } from "@/components/SourceBadge";
 import { type Report, overallBadge, signalLabel } from "@/lib/report";
 import { protocolLabel } from "@/lib/leaderboard";
@@ -22,7 +22,6 @@ const findings = [
 const actionItems = [
   { label: "打印", icon: Printer },
   { label: "分享", icon: Share2 },
-  { label: "复制给老板", icon: ClipboardCopy },
   { label: "加入对比", icon: GitCompare },
   { label: "重测", icon: RotateCw },
 ];
@@ -125,6 +124,7 @@ export default function ReportHeaderV2({
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-5">
+        <CopyToBossButton report={report} />
         {actionItems.map((item) => {
           const Icon = item.icon;
           return (
