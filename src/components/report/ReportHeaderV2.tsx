@@ -27,6 +27,19 @@ const actionItems = [
   { label: "重测", icon: RotateCw },
 ];
 
+function sourceKindFor(host: string): SourceKind {
+  const normalized = host.toLowerCase();
+  if (
+    normalized === "api.openai.com" ||
+    normalized === "api.anthropic.com" ||
+    normalized === "generativelanguage.googleapis.com"
+  ) {
+    return "official";
+  }
+  if (normalized.startsWith("ch-")) return "unknown";
+  return "relay";
+}
+
 export default function ReportHeaderV2({
   report,
   onAction,
@@ -36,11 +49,7 @@ export default function ReportHeaderV2({
 }) {
   const eff = report.overall === "skipped" ? "green" : report.overall;
   const badge = overallBadge[eff];
-  const sourceKind: SourceKind = report.meta.channelHandle.includes("api.")
-    ? "official"
-    : report.meta.channelHandle.includes("ch-")
-      ? "unknown"
-      : "relay";
+  const sourceKind = sourceKindFor(report.meta.channelHandle);
 
   return (
     <section className="glass-card p-5 sm:p-6">
