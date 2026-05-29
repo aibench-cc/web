@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Github } from "lucide-react";
+import CompareNavLink from "./CompareNavLink";
 
 export default function SiteHeader() {
   return (
@@ -19,6 +20,7 @@ export default function SiteHeader() {
           <Link href="/leaderboard" className="transition-colors hover:text-hi">
             行业榜
           </Link>
+          <CompareNavLink />
           <Link href="/history" className="transition-colors hover:text-hi">
             我的记录
           </Link>

@@ -17,6 +17,7 @@ import {
   dimOrder,
   dimTitle,
 } from "@/lib/report";
+import { addCompareId } from "@/lib/compare";
 import ReportHeader from "./ReportHeader";
 import ReportHeaderV2 from "./ReportHeaderV2";
 import DimensionCard from "./DimensionCard";
@@ -153,6 +154,11 @@ export default function ReportView({
     setTimeout(() => setShareToast(false), 2200);
   };
 
+  const handleAddCompare = () => {
+    const ids = addCompareId(report.reportId);
+    router.push(`/compare?ids=${ids.join(",")}`);
+  };
+
   // 打印态: summary 模式下整卡折叠态(只出结论), 不强制展开
   const forceExpand = printing && detail === "full";
 
@@ -172,6 +178,7 @@ export default function ReportView({
               onAction={(action) => {
                 if (action === "打印") setShowSelector(true);
                 if (action === "分享") handleShare();
+                if (action === "加入对比") handleAddCompare();
                 if (action === "重测") router.push("/#check");
               }}
             />
@@ -184,6 +191,7 @@ export default function ReportView({
               dimensions={report.dimensions}
               onPrint={() => setShowSelector(true)}
               onShare={handleShare}
+              onAddCompare={handleAddCompare}
               onRecheck={() => router.push("/#check")}
               shareToast={shareToast}
             />

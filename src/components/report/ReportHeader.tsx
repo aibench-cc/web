@@ -1,6 +1,6 @@
 "use client";
 
-import { Printer, Share2, RotateCw, Check, AlertTriangle, X, MinusCircle } from "lucide-react";
+import { Printer, Share2, RotateCw, Check, AlertTriangle, X, MinusCircle, GitCompare } from "lucide-react";
 import {
   type ReportMeta,
   type Signal,
@@ -46,6 +46,7 @@ export default function ReportHeader({
   onPrint,
   onShare,
   onRecheck,
+  onAddCompare,
   shareToast,
 }: {
   overall: Signal;
@@ -56,6 +57,7 @@ export default function ReportHeader({
   onPrint: () => void;
   onShare: () => void;
   onRecheck: () => void;
+  onAddCompare: () => void;
   shareToast: boolean;
 }) {
   // skipped 不会作为整体档(取最差时已剔除),兜底当 green 处理
@@ -152,6 +154,10 @@ export default function ReportHeader({
         <button type="button" onClick={onShare} className="btn-ghost !px-4 !py-2.5 !text-sm">
           <Share2 className="mr-1.5 h-4 w-4" />
           {shareToast ? "已复制,链接匿名" : "分享链接"}
+        </button>
+        <button type="button" onClick={onAddCompare} className="btn-ghost !px-4 !py-2.5 !text-sm">
+          <GitCompare className="mr-1.5 h-4 w-4" />
+          加入对比
         </button>
         <button type="button" onClick={onRecheck} className="btn-ghost !px-4 !py-2.5 !text-sm">
           <RotateCw className="mr-1.5 h-4 w-4" />

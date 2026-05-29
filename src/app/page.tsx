@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import SponsorFooter from "@/components/SponsorFooter";
 import QuickCheckForm from "@/components/QuickCheckForm";
+import CompareNavLink from "@/components/CompareNavLink";
 import LeaderboardPreview from "@/components/LeaderboardPreview";
 import VendorMarquee, { type Vendor } from "@/components/VendorMarquee";
 import { fetchLeaderboard, fetchStats, seedStats } from "@/lib/api";
@@ -123,6 +124,7 @@ function Header() {
           <Link href="/leaderboard" className="transition-colors hover:text-hi">
             行业榜
           </Link>
+          <CompareNavLink />
           <Link href="/history" className="transition-colors hover:text-hi">
             我的记录
           </Link>
