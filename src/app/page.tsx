@@ -16,8 +16,9 @@ import {
 } from "lucide-react";
 import SponsorFooter from "@/components/SponsorFooter";
 import QuickCheckForm from "@/components/QuickCheckForm";
+import LeaderboardPreview from "@/components/LeaderboardPreview";
 import VendorMarquee, { type Vendor } from "@/components/VendorMarquee";
-import { fetchStats, seedStats } from "@/lib/api";
+import { fetchLeaderboard, fetchStats, seedStats } from "@/lib/api";
 
 type Dimension = {
   icon: React.ComponentType<{ className?: string }>;
@@ -75,44 +76,26 @@ const vendors: Vendor[] = [
   { name: "腾讯混元", accent: "#1296DB" },
 ];
 
-type LeaderRow = {
-  rank: number;
-  channel: string;
-  model: string;
-  p95: string;
-  hit: string;
-  purity: "通过" | "降级" | "存疑";
-  cost: string;
-  grade: "A" | "B" | "C";
-};
-
 const heroStats = {
   channels: 1248,
   grades: { A: 316, B: 540, C: 392 },
   verdict: "参差不齐",
 };
 
-const leaderboard: LeaderRow[] = [
-  { rank: 1, channel: "官方直连", model: "claude-sonnet-4-5", p95: "0.82s", hit: "94%", purity: "通过", cost: "1.00x", grade: "A" },
-  { rank: 2, channel: "channel-7x", model: "gpt-4o", p95: "0.91s", hit: "88%", purity: "通过", cost: "1.03x", grade: "A" },
-  { rank: 3, channel: "官方直连", model: "deepseek-chat", p95: "1.04s", hit: "91%", purity: "通过", cost: "1.00x", grade: "A" },
-  { rank: 4, channel: "relay-cn-2", model: "gemini-2.5-flash", p95: "1.22s", hit: "73%", purity: "通过", cost: "1.08x", grade: "B" },
-  { rank: 5, channel: "fast-proxy", model: "glm-4.6", p95: "1.35s", hit: "65%", purity: "通过", cost: "1.12x", grade: "B" },
-  { rank: 6, channel: "channel-3a", model: "claude-sonnet-4-5", p95: "1.58s", hit: "41%", purity: "存疑", cost: "1.31x", grade: "C" },
-  { rank: 7, channel: "cheap-relay", model: "gpt-4o", p95: "2.04s", hit: "12%", purity: "降级", cost: "1.74x", grade: "C" },
-];
-
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const stats = await fetchStats().catch(() => seedStats);
+  const [stats, leaderboardRows] = await Promise.all([
+    fetchStats().catch(() => seedStats),
+    fetchLeaderboard("24h"),
+  ]);
   return (
     <>
       <Header />
       <main>
         <Hero checks={stats.channels} />
         <StatBand />
-        <LeaderboardPreview />
+        <LeaderboardPreview rows={leaderboardRows} />
         <HowItWorks />
         <DimensionsSection />
         <VendorsSection />
@@ -308,95 +291,6 @@ function StatBand() {
             <div className="mt-1 text-xs text-lo">{s.sub}</div>
           </div>
         ))}
-      </div>
-    </section>
-  );
-}
-
-function LeaderboardPreview() {
-  const gradeColor: Record<LeaderRow["grade"], string> = {
-    A: "text-ok",
-    B: "text-warn",
-    C: "text-err",
-  };
-  const purityColor: Record<LeaderRow["purity"], string> = {
-    通过: "text-ok",
-    存疑: "text-warn",
-    降级: "text-err",
-  };
-  return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
-      <div className="flex items-end justify-between mb-6">
-        <div>
-          <div className="inline-flex items-center gap-2 mb-3 rounded-full border border-ok/25 bg-ok/[0.08] px-3 py-1 text-xs font-medium text-ok">
-            <span className="h-1.5 w-1.5 rounded-full bg-ok animate-pulse-dot" />
-            公测榜单 · 早期数据
-          </div>
-          <h2 className="text-2xl lg:text-3xl font-semibold text-hi">
-            谁家渠道真的稳？
-          </h2>
-          <p className="text-mid mt-2 max-w-xl">
-            匿名聚合真实检测结果，按纯度、延迟、缓存与实测成本排名 —— 不收钱，只认数据。
-          </p>
-        </div>
-        <Link
-          href="/leaderboard"
-          className="hidden sm:inline-flex items-center gap-1.5 text-sm font-medium text-brand-bright transition-colors hover:text-hi"
-        >
-          查看完整榜单
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
-
-      <div className="glass-card overflow-hidden">
-        <div className="hidden md:grid grid-cols-[48px_1.4fr_1fr_88px_88px_88px_72px] gap-2 px-5 py-3 border-b border-white/[0.06] text-xs font-medium uppercase tracking-wider text-lo">
-          <div>#</div>
-          <div>渠道 / 模型</div>
-          <div></div>
-          <div className="text-right">P95</div>
-          <div className="text-right">缓存命中</div>
-          <div className="text-center">纯度</div>
-          <div className="text-center">评级</div>
-        </div>
-        {leaderboard.map((r) => (
-          <div
-            key={r.rank}
-            className="grid grid-cols-2 md:grid-cols-[48px_1.4fr_1fr_88px_88px_88px_72px] gap-2 px-5 py-3.5 border-b border-white/[0.04] last:border-0 text-sm transition-colors hover:bg-white/[0.025]"
-          >
-            <div className="font-mono text-lo md:self-center">
-              {String(r.rank).padStart(2, "0")}
-            </div>
-            <div className="font-medium text-hi md:self-center">{r.channel}</div>
-            <div className="font-mono text-xs text-mid md:self-center">
-              {r.model}
-            </div>
-            <div className="font-mono text-right text-hi md:self-center">
-              {r.p95}
-            </div>
-            <div className="font-mono text-right text-mid md:self-center">
-              {r.hit}
-            </div>
-            <div
-              className={`text-center md:self-center font-medium ${purityColor[r.purity]}`}
-            >
-              {r.purity}
-            </div>
-            <div className="text-center md:self-center">
-              <span
-                className={`inline-flex h-6 w-6 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] font-mono text-xs font-bold ${gradeColor[r.grade]}`}
-              >
-                {r.grade}
-              </span>
-            </div>
-          </div>
-        ))}
-        <Link
-          href="/leaderboard"
-          className="sm:hidden flex items-center justify-center gap-1.5 px-5 py-4 text-sm font-medium text-brand-bright"
-        >
-          查看完整榜单
-          <ArrowRight className="h-4 w-4" />
-        </Link>
       </div>
     </section>
   );
