@@ -18,6 +18,7 @@ import {
   dimTitle,
 } from "@/lib/report";
 import ReportHeader from "./ReportHeader";
+import ReportHeaderV2 from "./ReportHeaderV2";
 import DimensionCard from "./DimensionCard";
 import PrintSelector, { type PrintDetail } from "./PrintSelector";
 
@@ -37,7 +38,13 @@ const allSelected = () =>
     {} as Record<DimKey, boolean>,
   );
 
-export default function ReportView({ report }: { report: Report }) {
+export default function ReportView({
+  report,
+  useV2Header = false,
+}: {
+  report: Report;
+  useV2Header?: boolean;
+}) {
   const router = useRouter();
   const [expanded, setExpanded] = useState<DimKey | null>(null);
   const [printing, setPrinting] = useState(false);
@@ -79,17 +86,28 @@ export default function ReportView({ report }: { report: Report }) {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-6 print:!block">
         {/* 左栏: 顶结论(桌面端 sticky;打印态正常流) */}
         <div className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 print:max-h-none print:overflow-visible print:pr-0">
-          <ReportHeader
-            overall={report.overall}
-            verdictTitle={report.verdictTitle}
-            verdictDetail={report.verdictDetail}
-            meta={report.meta}
-            dimensions={report.dimensions}
-            onPrint={() => setShowSelector(true)}
-            onShare={handleShare}
-            onRecheck={() => router.push("/#check")}
-            shareToast={shareToast}
-          />
+          {useV2Header ? (
+            <ReportHeaderV2
+              report={report}
+              onAction={(action) => {
+                if (action === "打印") setShowSelector(true);
+                if (action === "分享") handleShare();
+                if (action === "重测") router.push("/#check");
+              }}
+            />
+          ) : (
+            <ReportHeader
+              overall={report.overall}
+              verdictTitle={report.verdictTitle}
+              verdictDetail={report.verdictDetail}
+              meta={report.meta}
+              dimensions={report.dimensions}
+              onPrint={() => setShowSelector(true)}
+              onShare={handleShare}
+              onRecheck={() => router.push("/#check")}
+              shareToast={shareToast}
+            />
+          )}
         </div>
 
         {/* 右栏: 各维度明细 */}
