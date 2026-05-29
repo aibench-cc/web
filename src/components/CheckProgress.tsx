@@ -120,11 +120,11 @@ export default function CheckProgress({
         <div className="min-w-0">
           <div className="inline-flex items-center gap-2 rounded-lg border border-brand/30 bg-brand/[0.08] px-2.5 py-1 text-xs font-medium text-brand-bright">
             <ShieldCheck className="h-3.5 w-3.5" />
-            实时探针清单
+            探针进度预览
           </div>
           <h2 className="mt-3 text-xl font-semibold text-hi">{currentStage}</h2>
           <p className="mt-1 text-sm text-mid">
-            已完成 {doneCount}/{totalCount} 项，当前结果仅用于 Day 1 mock 预览。
+            已完成 {doneCount}/{totalCount} 项，展示真实检测时的探针分组与状态样式。
           </p>
         </div>
 
