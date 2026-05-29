@@ -49,17 +49,17 @@ export default function SourceBadge({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center gap-3 px-3 py-2.5 text-left"
+        className="flex w-full min-w-0 items-center gap-2 px-3 py-2.5 text-left sm:gap-3"
       >
         <Icon className="h-4 w-4 shrink-0" />
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
             <span className="text-sm font-semibold">{source.label}</span>
-            <span className="font-mono text-[11px] opacity-75">{host}</span>
+            <span className="min-w-0 break-all font-mono text-[11px] opacity-75">{host}</span>
           </div>
           <div className="mt-0.5 text-[11px] opacity-75">{source.hint}</div>
         </div>
-        <div className="shrink-0 text-right">
+        <div className="hidden shrink-0 text-right sm:block">
           <div className="font-mono text-xl font-semibold leading-none">{confidence}%</div>
           <div className="mt-0.5 text-[10px] opacity-75">confidence</div>
         </div>

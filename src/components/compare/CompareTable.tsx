@@ -35,15 +35,17 @@ export default function CompareTable({
 }) {
   const [ids, setIds] = useState(initialIds);
   const [copied, setCopied] = useState(false);
+  const initialKey = initialIds.join(",");
 
   useEffect(() => {
-    if (ids.length > 0) {
-      saveCompareIds(ids);
+    if (initialIds.length > 0) {
+      saveCompareIds(initialIds);
+      setIds(initialIds);
       return;
     }
     const stored = loadCompareIds();
     if (stored.length > 0) setIds(stored);
-  }, []);
+  }, [initialIds, initialKey]);
 
   const items = useMemo(() => {
     const byId = new Map(initialReports.map((item) => [item.id, item.report]));
@@ -67,7 +69,7 @@ export default function CompareTable({
       <div className="glass-card p-6 text-center">
         <h1 className="text-xl font-semibold text-hi">对比清单为空</h1>
         <p className="mt-2 text-sm text-mid">在报告页点击“加入对比”，最多可并排 4 份报告。</p>
-        <Link href="/r/sample-yellow?v2=1" className="btn-glow mt-5">
+        <Link href="/r/sample-yellow" className="btn-glow mt-5">
           打开示例报告
         </Link>
       </div>

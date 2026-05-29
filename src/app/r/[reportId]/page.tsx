@@ -40,15 +40,11 @@ export async function generateMetadata({
 
 export default async function ReportPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ reportId: string }>;
-  searchParams?: Promise<{ v2?: string | string[] }>;
 }) {
   const { reportId } = await params;
-  const query = searchParams ? await searchParams : {};
   const report = await loadReport(reportId);
-  const useV2Header = reportId === "sample-yellow" && query.v2 === "1";
 
   if (!report) {
     return (
@@ -100,7 +96,7 @@ export default async function ReportPage({
       <div className="print:hidden">
         <SiteHeader />
       </div>
-      <ReportView report={report} useV2Header={useV2Header} />
+      <ReportView report={report} />
       <div className="print:hidden">
         <SponsorFooter />
       </div>

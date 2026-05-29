@@ -121,7 +121,7 @@ const v2ProbeGroups: ProbeGroup[] = [
 
 export default function ReportView({
   report,
-  useV2Header = false,
+  useV2Header = true,
 }: {
   report: Report;
   useV2Header?: boolean;
@@ -163,15 +163,15 @@ export default function ReportView({
   const forceExpand = printing && detail === "full";
 
   return (
-    <main className="mx-auto max-w-6xl px-6 pt-10 pb-8 print:max-w-none print:px-0 print:pt-0">
+    <main className="mx-auto max-w-6xl overflow-x-hidden px-4 pt-10 pb-8 sm:px-6 print:max-w-none print:px-0 print:pt-0">
       {/* 打印专属页眉(仅打印可见) */}
       <PrintHeader checkedAt={report.meta.checkedAt} />
 
       {/* 屏幕态: lg+ 两栏(左 sticky 顶结论 + 右滚动各维度),lg- 单列堆叠
           打印态: 强制单列(print:block + print:gap-0) */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-6 print:!block">
+      <div className="grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-6 print:!block">
         {/* 左栏: 顶结论(桌面端 sticky;打印态正常流) */}
-        <div className="lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 print:max-h-none print:overflow-visible print:pr-0">
+        <div className="min-w-0 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 print:max-h-none print:overflow-visible print:pr-0">
           {useV2Header ? (
             <ReportHeaderV2
               report={report}
@@ -199,7 +199,7 @@ export default function ReportView({
         </div>
 
         {/* 右栏: 各维度明细 */}
-        <div className="flex flex-col gap-4 print:mt-4">
+        <div className="min-w-0 flex flex-col gap-4 print:mt-4">
           <p className="px-1 text-xs text-lo print:hidden">
             下面是各维度的结论,点任意一张卡片可展开「这对你意味着什么」+ 专业判据与图表。
           </p>

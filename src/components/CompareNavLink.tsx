@@ -21,7 +21,7 @@ export default function CompareNavLink() {
   const href = count > 0 ? `/compare?ids=${loadCompareIds().join(",")}` : "/compare";
 
   return (
-    <Link href={href} className="inline-flex items-center gap-1.5 transition-colors hover:text-hi">
+    <Link href={href} className="inline-flex shrink-0 items-center gap-1.5 transition-colors hover:text-hi">
       对比
       {count > 0 && (
         <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-brand/30 bg-brand/[0.12] px-1.5 font-mono text-[11px] text-brand-bright">
