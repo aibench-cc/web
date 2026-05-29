@@ -9,7 +9,8 @@ import {
   RotateCw,
   Share2,
 } from "lucide-react";
-import { type Report, type Signal, overallBadge, signalLabel } from "@/lib/report";
+import SourceBadge, { type SourceKind } from "@/components/SourceBadge";
+import { type Report, overallBadge, signalLabel } from "@/lib/report";
 import { protocolLabel } from "@/lib/leaderboard";
 
 const findings = [
@@ -26,12 +27,6 @@ const actionItems = [
   { label: "重测", icon: RotateCw },
 ];
 
-function sourceTone(signal: Signal) {
-  if (signal === "green") return "border-ok/40 bg-ok/[0.08] text-ok";
-  if (signal === "red") return "border-err/40 bg-err/[0.08] text-err";
-  return "border-warn/40 bg-warn/[0.08] text-warn";
-}
-
 export default function ReportHeaderV2({
   report,
   onAction,
@@ -41,7 +36,11 @@ export default function ReportHeaderV2({
 }) {
   const eff = report.overall === "skipped" ? "green" : report.overall;
   const badge = overallBadge[eff];
-  const provenance = report.dimensions.provenance;
+  const sourceKind: SourceKind = report.meta.channelHandle.includes("api.")
+    ? "official"
+    : report.meta.channelHandle.includes("ch-")
+      ? "unknown"
+      : "relay";
 
   return (
     <section className="glass-card p-5 sm:p-6">
@@ -59,14 +58,17 @@ export default function ReportHeaderV2({
         </div>
 
         <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className={`rounded-lg border px-2.5 py-1 text-xs font-medium ${sourceTone(provenance.signal)}`}>
-              来源 {signalLabel[provenance.signal]} · 置信度中
-            </span>
-            <span className="rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1 font-mono text-xs text-lo">
-              {report.meta.channelHandle}
-            </span>
-          </div>
+          <SourceBadge
+            kind={sourceKind}
+            confidence={78}
+            host={report.meta.channelHandle}
+            signals={[
+              { label: "URL", value: report.meta.channelHandle, signal: sourceKind === "official" ? "green" : "yellow" },
+              { label: "headers", value: "anthropic-* present", signal: "green" },
+              { label: "body id", value: "msg_* native", signal: "green" },
+              { label: "rotation", value: "cache miss pattern", signal: "yellow" },
+            ]}
+          />
 
           <h1 className="mt-3 text-2xl font-semibold leading-tight text-hi">
             {report.verdictTitle}

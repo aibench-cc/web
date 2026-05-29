@@ -20,6 +20,7 @@ import {
 import ReportHeader from "./ReportHeader";
 import ReportHeaderV2 from "./ReportHeaderV2";
 import DimensionCard from "./DimensionCard";
+import DimensionGroupV2, { type ProbeGroup } from "./DimensionGroupV2";
 import PrintSelector, { type PrintDetail } from "./PrintSelector";
 
 const dimIcon: Record<DimKey, React.ComponentType<{ className?: string }>> = {
@@ -37,6 +38,85 @@ const allSelected = () =>
     (acc, k) => ({ ...acc, [k]: true }),
     {} as Record<DimKey, boolean>,
   );
+
+const v2ProbeGroups: ProbeGroup[] = [
+  {
+    key: "protocol",
+    title: "A. 协议根基",
+    summary: "Anthropic Messages 结构完整,usage 和 stop_reason 符合预期。",
+    score: 38,
+    maxScore: 38,
+    probes: [
+      {
+        name: "A1 响应 Schema 合规",
+        signal: "green",
+        weight: 12,
+        message: "messages 响应字段严格匹配,没有 OpenAI 兼容层泄漏。",
+        raw_trace: { type: "message", role: "assistant", content: ["text"], usage: { input_tokens: 129, output_tokens: 64 } },
+      },
+      {
+        name: "A2 Usage 字段完整性",
+        signal: "green",
+        weight: 8,
+        message: "input/output/cache 三段 usage 可读取。",
+        raw_trace: { input_tokens: 129, output_tokens: 64, cache_read_input_tokens: 0 },
+      },
+      { name: "A3 Stop Reason 合法", signal: "green", weight: 6, message: "stop_reason 返回 end_turn。", raw_trace: { stop_reason: "end_turn" } },
+      { name: "A4 Max Tokens 遵守度", signal: "green", weight: 12, message: "短限额请求按预期截断。", raw_trace: { requested: 24, observed_output_tokens: 24 } },
+    ],
+  },
+  {
+    key: "identity",
+    title: "B. 模型身份",
+    summary: "主体字段一致,但自报版本和缓存轮询仍有弱信号。",
+    score: 28,
+    maxScore: 35,
+    probes: [
+      { name: "B1 响应 model 字段", signal: "green", weight: 5, message: "响应 model 与请求模型一致。", raw_trace: { requested: "claude-opus-4-7", actual: "claude-opus-4-7" } },
+      { name: "B2 自我声明", signal: "yellow", weight: 6, message: "模型自称 Claude,但未给出精确版本。", raw_trace: { answer: "I am Claude, an AI assistant." } },
+      { name: "B3 prompt_tokens 落点", signal: "green", weight: 6, message: "token 落点在基线容忍区间。", raw_trace: { baseline: 118, observed: 124, tolerance: "±30%" } },
+      { name: "B5 Claude thinking/signature", signal: "yellow", weight: 18, message: "Day 4 接真实 signature_delta,当前为 mock 占位。", raw_trace: { signature_delta: "pending", thinking_blocks: 0 } },
+    ],
+  },
+  {
+    key: "runtime",
+    title: "C. 运行表现",
+    summary: "延迟和流式体验可用,伪流式判定等待真实探针接入。",
+    score: 17,
+    maxScore: 18,
+    probes: [
+      { name: "C1 延迟分布", signal: "green", weight: 6, message: "P95 低于 1 秒。", raw_trace: { p50_ms: 540, p95_ms: 820, p99_ms: 1180 } },
+      { name: "C2 TTFT", signal: "green", weight: 4, message: "首字 0.6s,体感顺滑。", raw_trace: { ttft_ms: 600, first_event_ms: 580 } },
+      { name: "C3 流式真实性", signal: "yellow", weight: 4, message: "chunk 间隔稳定性待真实 SSE 数据确认。", raw_trace: { chunk_count: 18, median_gap_ms: 42 } },
+      { name: "C4 并发承载", signal: "green", weight: 4, message: "20 次采样未触发 429。", raw_trace: { total: 20, success: 20, rate_limited: 0 } },
+    ],
+  },
+  {
+    key: "cost-cache",
+    title: "D. 成本缓存",
+    summary: "缓存读取信号偏弱,采购前需要重点复测账单。",
+    score: 3,
+    maxScore: 7,
+    probes: [
+      { name: "D1 缓存写入", signal: "green", weight: 2, message: "cache_creation 字段可见。", raw_trace: { cache_creation_input_tokens: 1420 } },
+      { name: "D2 缓存读取", signal: "red", weight: 3, message: "第二次请求未读到 cache_read。", raw_trace: { cache_read_input_tokens: 0, expected: "> 0" } },
+      { name: "D3 成本估算", signal: "yellow", weight: 2, message: "因缓存不命中,实际费用接近 worst case。", raw_trace: { actual_usd: 0.012, worst_case_usd: 0.012 } },
+    ],
+  },
+  {
+    key: "source",
+    title: "E. 渠道来源",
+    summary: "URL 与 body 像原生 Anthropic,但轮询信号提示可能存在共享池。",
+    score: 7,
+    maxScore: 10,
+    probes: [
+      { name: "E1 URL 归因", signal: "yellow", weight: 2, message: "非官方 host,判为中转。", raw_trace: { host: "modelboxs.com", kind: "relay" } },
+      { name: "E2 响应 headers", signal: "green", weight: 2, message: "存在 Anthropic 风格 headers。", raw_trace: { headers: ["anthropic-ratelimit-requests-limit"] } },
+      { name: "E3 body id pattern", signal: "green", weight: 2, message: "id 格式符合原生 msg_*。", raw_trace: { id: "msg_01H..." } },
+      { name: "E4 多账号轮询", signal: "yellow", weight: 4, message: "缓存模式提示可能轮询多个上游 key。", raw_trace: { cache_pattern: "unstable", confidence: 78 } },
+    ],
+  },
+];
 
 export default function ReportView({
   report,
@@ -116,21 +196,25 @@ export default function ReportView({
             下面是各维度的结论,点任意一张卡片可展开「这对你意味着什么」+ 专业判据与图表。
           </p>
 
-          {dimOrder.map((k) => (
-            <DimensionCard
-              key={k}
-              dimKey={k}
-              icon={dimIcon[k]}
-              title={dimTitle[k]}
-              data={report.dimensions[k]}
-              open={expanded === k}
-              printing={forceExpand}
-              printIncluded={selection[k]}
-              onToggle={() =>
-                setExpanded((cur) => (cur === k ? null : k))
-              }
-            />
-          ))}
+          {useV2Header ? (
+            <DimensionGroupV2 groups={v2ProbeGroups} />
+          ) : (
+            dimOrder.map((k) => (
+              <DimensionCard
+                key={k}
+                dimKey={k}
+                icon={dimIcon[k]}
+                title={dimTitle[k]}
+                data={report.dimensions[k]}
+                open={expanded === k}
+                printing={forceExpand}
+                printIncluded={selection[k]}
+                onToggle={() =>
+                  setExpanded((cur) => (cur === k ? null : k))
+                }
+              />
+            ))
+          )}
 
           <p className="mt-2 text-center text-xs text-lo">
             判据全部公开,你可以自己复核 ·{" "}
