@@ -17,26 +17,26 @@ export default function RawTraceViewer({
   const tokens = useMemo(() => tokenizeJson(source), [source]);
 
   return (
-    <div className="overflow-hidden rounded-lg border border-white/[0.07] bg-black/20">
+    <div className="overflow-hidden rounded-lg border border-slate-200 bg-slate-950">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-mid transition-colors hover:bg-white/[0.03]"
+        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs text-slate-300 transition-colors hover:bg-white/10"
       >
-        <Code2 className="h-3.5 w-3.5 text-brand-bright" />
+        <Code2 className="h-3.5 w-3.5 text-blue-300" />
         <span className="min-w-0 flex-1 truncate font-mono">{title}</span>
-        <span className="text-lo">{open ? "收起" : "展开技术证据"}</span>
-        <ChevronDown className={`h-3.5 w-3.5 text-lo transition-transform ${open ? "rotate-180" : ""}`} />
+        <span className="text-slate-400">{open ? "收起" : "展开技术证据"}</span>
+        <ChevronDown className={`h-3.5 w-3.5 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
-        <div className="border-t border-white/[0.06]">
-          <div className="flex items-center justify-between gap-2 px-3 py-2 text-[11px] text-lo">
+        <div className="border-t border-white/10">
+          <div className="flex items-center justify-between gap-2 px-3 py-2 text-[11px] text-slate-400">
             <span>JSON 证据快照</span>
             <button
               type="button"
               onClick={() => navigator.clipboard?.writeText(source).catch(() => {})}
-              className="inline-flex items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-mid transition-colors hover:text-hi"
+              className="inline-flex items-center gap-1 rounded-md border border-white/10 px-2 py-1 text-slate-300 transition-colors hover:text-white"
             >
               <Copy className="h-3 w-3" />
               复制
@@ -66,21 +66,21 @@ function tokenizeJson(source: string) {
   let cursor = 0;
   for (const match of source.matchAll(matcher)) {
     const index = match.index ?? 0;
-    if (index > cursor) tokens.push({ text: source.slice(cursor, index), className: "text-lo" });
+    if (index > cursor) tokens.push({ text: source.slice(cursor, index), className: "text-slate-400" });
     const text = match[0];
     tokens.push({ text, className: tokenClass(text) });
     cursor = index + text.length;
   }
-  if (cursor < source.length) tokens.push({ text: source.slice(cursor), className: "text-lo" });
+  if (cursor < source.length) tokens.push({ text: source.slice(cursor), className: "text-slate-400" });
   return tokens;
 }
 
 function tokenClass(token: string) {
   if (token.startsWith('"') && token.endsWith('"') && token.match(/"(?=\s*:)/)) {
-    return "text-brand-bright";
+    return "text-blue-300";
   }
-  if (token.startsWith('"')) return "text-ok";
-  if (token === "true" || token === "false") return "text-warn";
-  if (token === "null") return "text-lo";
-  return "text-hi";
+  if (token.startsWith('"')) return "text-emerald-300";
+  if (token === "true" || token === "false") return "text-amber-300";
+  if (token === "null") return "text-slate-500";
+  return "text-slate-100";
 }

@@ -24,7 +24,7 @@ export default function CompareNavLink() {
     <Link href={href} className="inline-flex shrink-0 items-center gap-1.5 transition-colors hover:text-hi">
       对比
       {count > 0 && (
-        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-brand/30 bg-brand/[0.12] px-1.5 font-mono text-[11px] text-brand-bright">
+        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-brand/30 bg-brand/10 px-1.5 font-mono text-[11px] text-brand">
           {count}
         </span>
       )}

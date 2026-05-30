@@ -47,7 +47,7 @@ export default function ReportHeaderV2({
 
   return (
     <section className="glass-card min-w-0 overflow-hidden p-4 sm:p-6">
-      <div className="mb-4 inline-flex items-center gap-2 rounded-lg border border-brand/30 bg-brand/[0.08] px-2.5 py-1 text-xs font-medium text-brand-bright">
+      <div className="mb-4 inline-flex items-center gap-2 rounded-lg border border-brand/30 bg-brand/10 px-2.5 py-1 text-xs font-medium text-brand">
         <BadgeCheck className="h-3.5 w-3.5" />
         检测报告
       </div>
@@ -88,12 +88,12 @@ export default function ReportHeaderV2({
       </div>
 
       <div className="mt-5 grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="min-w-0 rounded-lg border border-white/[0.07] bg-white/[0.025] p-4">
+        <div className="min-w-0 rounded-lg border border-slate-200 bg-slate-50/80 p-4">
           <h2 className="text-sm font-semibold text-hi">关键发现</h2>
           <div className="mt-3 space-y-2">
             {findings.map((finding, index) => (
               <div key={finding} className="flex gap-2 text-sm leading-relaxed text-mid">
-                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] font-mono text-[11px] text-hi">
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white font-mono text-[11px] text-hi">
                   {index + 1}
                 </span>
                 <span className="min-w-0 break-words">{finding}</span>
@@ -102,7 +102,7 @@ export default function ReportHeaderV2({
           </div>
         </div>
 
-        <div className="min-w-0 rounded-lg border border-white/[0.07] bg-white/[0.025] p-4">
+        <div className="min-w-0 rounded-lg border border-slate-200 bg-slate-50/80 p-4">
           <h2 className="text-sm font-semibold text-hi">采购建议</h2>
           <p className="mt-3 text-sm leading-relaxed text-mid">
             这条渠道可以进入候选池，但不要直接承担核心生产流量。建议先用低风险业务灰度 3 天，并重点观察缓存账单和来源稳定性。
@@ -119,7 +119,7 @@ export default function ReportHeaderV2({
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-2">
-        <CopyToBossButton report={report} className="col-span-2" />
+        <CopyToBossButton report={report} className="col-span-2 min-w-0" />
         {actionItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -127,7 +127,7 @@ export default function ReportHeaderV2({
               key={item.label}
               type="button"
               onClick={() => onAction?.(item.label)}
-              className="btn-ghost h-10 !rounded-lg !px-2 !py-2 text-xs sm:text-sm"
+              className="btn-ghost h-10 min-w-0 !rounded-lg !px-2 !py-2 text-xs sm:text-sm"
             >
               <Icon className="mr-1.5 h-4 w-4" />
               {item.label}
@@ -141,7 +141,7 @@ export default function ReportHeaderV2({
 
 function Meta({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-white/[0.07] bg-white/[0.025] px-3 py-2">
+    <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
       <div className="text-[11px] text-lo">{label}</div>
       <div className="mt-0.5 truncate font-mono text-xs text-hi">{value}</div>
     </div>

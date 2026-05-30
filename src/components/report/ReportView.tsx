@@ -258,7 +258,7 @@ export default function ReportView({
   const forceExpand = printing && detail === "full";
 
   return (
-    <main className="mx-auto max-w-6xl overflow-x-hidden px-4 pt-10 pb-8 sm:px-6 print:max-w-none print:px-0 print:pt-0">
+    <main className="mx-auto max-w-6xl min-w-0 overflow-x-hidden px-4 pt-10 pb-8 sm:px-6 print:max-w-none print:px-0 print:pt-0">
       {/* 打印专属页眉(仅打印可见) */}
       <PrintHeader checkedAt={report.meta.checkedAt} />
 
@@ -323,7 +323,7 @@ export default function ReportView({
             判据全部公开,你可以自己复核 ·{" "}
             <a
               href="/about#methodology"
-              className="text-brand-bright transition-colors hover:text-hi print:hidden"
+              className="text-brand transition-colors hover:text-hi print:hidden"
             >
               如何复核 →
             </a>

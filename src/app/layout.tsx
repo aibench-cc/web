@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import SpaceBackground from "@/components/SpaceBackground";
 import TopStatusBar from "@/components/TopStatusBar";
 
 const CF_ANALYTICS_TOKEN = "d2209cdd00e247378bf74ddf8658e9a0";
@@ -53,12 +52,6 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" className={`${inter.variable} ${jbmono.variable}`}>
       <body className="space-bg font-sans antialiased min-h-screen bg-base text-hi selection:bg-brand/40">
-        <SpaceBackground />
-        <div className="aurora" aria-hidden>
-          <span className="aurora__orb aurora__orb--1" />
-          <span className="aurora__orb aurora__orb--2" />
-          <span className="aurora__orb aurora__orb--3" />
-        </div>
         <TopStatusBar />
         {children}
         {process.env.NODE_ENV === "production" && (

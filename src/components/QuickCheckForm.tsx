@@ -57,7 +57,13 @@ type Progress = {
 };
 
 const inputClass =
-  "w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm font-mono text-hi placeholder:text-lo transition-colors focus:border-brand/60 focus:outline-none focus:ring-2 focus:ring-brand/20";
+  "w-full min-w-0 rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-mono text-hi placeholder:text-slate-400 transition-colors focus:border-brand/60 focus:outline-none focus:ring-2 focus:ring-brand/15";
+
+const panelClass =
+  "rounded-lg border border-slate-200 bg-slate-50/80";
+
+const softButtonClass =
+  "rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-mid transition-colors hover:border-brand/50 hover:bg-brand/5 hover:text-brand";
 
 type Mode = "latency" | "concurrency" | "rpm" | "tpm";
 
@@ -288,26 +294,28 @@ export default function QuickCheckForm() {
         e.preventDefault();
         if (isQuick && !submitting) startRun();
       }}
-      className="glass-card relative p-6 lg:p-8 flex flex-col gap-5"
+      className="glass-card relative flex min-w-0 flex-col gap-5 p-5 sm:p-6 lg:p-7"
     >
-      <div
-        className="pointer-events-none absolute -top-px left-10 right-10 h-px hairline"
-        aria-hidden
-      />
-      <div>
-        <h2 className="text-lg font-semibold text-hi">快检</h2>
-        <p className="text-sm text-mid mt-1">
-          填入渠道信息,30 秒内得到一份可分享的健康报告。
-        </p>
+      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h2 className="text-lg font-semibold text-hi">渠道检测配置</h2>
+          <p className="mt-1 text-sm leading-relaxed text-mid">
+            填入协议、接口地址、API Key 和模型名，生成可分享的渠道审计报告。
+          </p>
+        </div>
+        <span className="inline-flex shrink-0 items-center gap-1.5 self-start rounded-full border border-ok/25 bg-ok/10 px-3 py-1 text-xs font-semibold text-ok">
+          <ShieldCheck className="h-3.5 w-3.5" />
+          key 仅本次转发
+        </span>
       </div>
 
-      <fieldset className="flex flex-col gap-2.5">
-        <legend className="text-sm font-medium text-hi mb-1">协议</legend>
-        <div className="grid grid-cols-3 gap-2">
+      <fieldset className="flex min-w-0 flex-col gap-2.5">
+        <legend className="mb-1 text-sm font-semibold text-hi">协议</legend>
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           {protocols.map((p) => (
             <label
               key={p.id}
-              className="relative flex cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] px-2 py-2.5 text-xs font-medium text-mid transition-all has-[:checked]:border-brand/60 has-[:checked]:bg-brand/[0.1] has-[:checked]:text-brand-bright hover:border-white/20"
+              className="relative flex min-h-10 cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-center text-sm font-semibold text-mid transition-all has-[:checked]:border-brand has-[:checked]:bg-brand/10 has-[:checked]:text-brand hover:border-brand/50"
             >
               <input
                 type="radio"
@@ -317,15 +325,15 @@ export default function QuickCheckForm() {
                 onChange={() => setProtocol(p.id)}
                 className="sr-only"
               />
-              {p.label}
+              <span className="break-words">{p.label}</span>
             </label>
           ))}
         </div>
       </fieldset>
 
-      <div className="flex flex-col gap-2">
-        <span className="text-xs text-lo">国产厂商预设(一键填 base_url)</span>
-        <div className="flex flex-wrap gap-1.5">
+      <div className="flex min-w-0 flex-col gap-2">
+        <span className="text-xs font-semibold text-mid">国产厂商预设，一键填 base_url</span>
+        <div className="flex min-w-0 flex-wrap gap-1.5">
           {DOMESTIC_PRESETS.map((p) => {
             const active = baseUrl === p.baseUrl && protocol === p.protocol;
             return (
@@ -340,10 +348,10 @@ export default function QuickCheckForm() {
                   setState("idle");
                   setHint(null);
                 }}
-                className={`rounded-lg border px-2.5 py-1.5 text-xs transition-colors ${
+                className={`rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors ${
                   active
-                    ? "border-brand/60 bg-brand/[0.12] text-brand-bright"
-                    : "border-white/10 bg-white/[0.04] text-mid hover:border-brand/40 hover:bg-brand/[0.08] hover:text-brand-bright"
+                    ? "border-ok/40 bg-ok/10 text-ok"
+                    : softButtonClass
                 }`}
               >
                 {p.label}
@@ -353,62 +361,64 @@ export default function QuickCheckForm() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="base_url" className="text-sm font-medium text-hi">
-          base_url <span className="text-lo font-normal">(留空走官方)</span>
-        </label>
-        <input
-          id="base_url"
-          name="base_url"
-          type="url"
-          value={baseUrl}
-          onChange={(e) => setBaseUrl(e.target.value)}
-          placeholder={activePlaceholder}
-          className={inputClass}
-        />
-      </div>
+      <div className="grid min-w-0 gap-4 sm:grid-cols-2">
+        <div className="flex min-w-0 flex-col gap-2">
+          <label htmlFor="base_url" className="text-sm font-semibold text-hi">
+            base_url <span className="font-normal text-lo">(留空走官方)</span>
+          </label>
+          <input
+            id="base_url"
+            name="base_url"
+            type="url"
+            value={baseUrl}
+            onChange={(e) => setBaseUrl(e.target.value)}
+            placeholder={activePlaceholder}
+            className={inputClass}
+          />
+        </div>
 
-      <div className="flex flex-col gap-2">
-        <label htmlFor="api_key" className="text-sm font-medium text-hi">
-          api_key
-        </label>
-        <input
-          id="api_key"
-          name="api_key"
-          type="password"
-          value={apiKey}
-          onChange={(e) => {
-            const v = e.target.value;
-            setApiKey(v);
-            if (/^sk-ant-oat-/.test(v.trim())) {
-              setProtocol("anthropic");
-              setClaudeCode(true);
-            }
-          }}
-          placeholder="sk-..."
-          autoComplete="off"
-          className={inputClass}
-        />
-        <p className="flex items-center gap-1.5 text-xs text-lo">
-          <ShieldCheck className="h-3.5 w-3.5 text-ok" />
-          仅本次转发，不落库、不记录日志。
-        </p>
+        <div className="flex min-w-0 flex-col gap-2">
+          <label htmlFor="api_key" className="text-sm font-semibold text-hi">
+            api_key
+          </label>
+          <input
+            id="api_key"
+            name="api_key"
+            type="password"
+            value={apiKey}
+            onChange={(e) => {
+              const v = e.target.value;
+              setApiKey(v);
+              if (/^sk-ant-oat-/.test(v.trim())) {
+                setProtocol("anthropic");
+                setClaudeCode(true);
+              }
+            }}
+            placeholder="sk-..."
+            autoComplete="off"
+            className={inputClass}
+          />
+        </div>
       </div>
+      <p className="flex min-w-0 items-start gap-1.5 text-xs leading-relaxed text-lo">
+        <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-ok" />
+        <span className="min-w-0 break-words">仅本次转发，不落库、不记录日志。</span>
+      </p>
 
-      <div className="flex flex-col gap-1.5">
+      <div className="flex min-w-0 flex-col gap-1.5">
         <label
-          className={`flex cursor-pointer items-center justify-between rounded-xl border px-3.5 py-2.5 transition-colors ${
+          className={`flex cursor-pointer items-center justify-between gap-4 rounded-lg border px-3.5 py-3 transition-colors ${
             claudeCode
-              ? "border-brand/60 bg-brand/[0.08]"
-              : "border-white/10 bg-white/[0.03] hover:border-white/20"
-          } ${protocol !== "anthropic" ? "cursor-not-allowed opacity-50" : ""}`}
+              ? "border-brand/50 bg-brand/5"
+              : "border-slate-200 bg-slate-50/80 hover:border-brand/40"
+          } ${protocol !== "anthropic" ? "cursor-not-allowed opacity-55" : ""}`}
         >
-          <div className="flex flex-col gap-0.5">
-            <span className={`text-sm font-medium ${claudeCode ? "text-brand-bright" : "text-hi"}`}>
+          <div className="min-w-0">
+            <span className={`block text-sm font-semibold ${claudeCode ? "text-brand" : "text-hi"}`}>
               Claude Code 限制专属
             </span>
-            <span className="text-xs text-lo">
-              key 只接受 Claude Code 客户端时打开;以 CLI 身份发起请求。
+            <span className="mt-0.5 block break-words text-xs leading-relaxed text-lo">
+              key 只接受 Claude Code 客户端时打开；以 CLI 身份发起请求。
             </span>
           </div>
           <input
@@ -421,12 +431,12 @@ export default function QuickCheckForm() {
           />
           <span
             className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${
-              claudeCode && protocol === "anthropic" ? "bg-brand" : "bg-white/15"
+              claudeCode && protocol === "anthropic" ? "bg-brand" : "bg-slate-300"
             }`}
             aria-hidden
           >
             <span
-              className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-transform ${
+              className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
                 claudeCode && protocol === "anthropic" ? "translate-x-4" : "translate-x-0.5"
               }`}
             />
@@ -437,16 +447,16 @@ export default function QuickCheckForm() {
         )}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <label htmlFor="model" className="text-sm font-medium text-hi">
+      <div className="flex min-w-0 flex-col gap-2">
+        <div className="flex items-center justify-between gap-3">
+          <label htmlFor="model" className="text-sm font-semibold text-hi">
             model
           </label>
           <button
             type="button"
             onClick={fetchModels}
             disabled={state === "loading"}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-brand/30 bg-brand/[0.08] px-2.5 py-1 text-xs font-medium text-brand-bright transition-all hover:border-brand/60 hover:bg-brand/[0.14] disabled:opacity-50"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-brand/35 bg-white px-2.5 py-1.5 text-xs font-semibold text-brand transition-all hover:border-brand hover:bg-brand/5 disabled:opacity-50"
           >
             <RefreshCw
               className={`h-3.5 w-3.5 ${state === "loading" ? "animate-spin" : ""}`}
@@ -455,11 +465,28 @@ export default function QuickCheckForm() {
           </button>
         </div>
 
+        {models.length > 0 && (
+          <div className="relative min-w-0">
+            <select
+              value={model}
+              onChange={(e) => setModel(e.target.value)}
+              className="w-full min-w-0 appearance-none rounded-lg border border-slate-300 bg-slate-50 px-3.5 py-2.5 pr-9 text-sm font-mono text-hi transition-colors focus:border-brand/60 focus:outline-none focus:ring-2 focus:ring-brand/15"
+            >
+              {models.map((m) => (
+                <option key={m} value={m} className="bg-white text-hi">
+                  {m}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-lo" />
+          </div>
+        )}
+
         {(() => {
           const chips = MODEL_CHIPS.filter((c) => c.protocol === protocol);
           if (chips.length === 0) return null;
           return (
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex min-w-0 flex-wrap gap-1.5">
               {chips.map((c) => {
                 const active = model === c.modelId;
                 return (
@@ -467,15 +494,15 @@ export default function QuickCheckForm() {
                     key={c.modelId}
                     type="button"
                     onClick={() => setModel(c.modelId)}
-                    className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs transition-colors ${
+                    className={`inline-flex max-w-full items-center gap-1 rounded-lg border px-2.5 py-1.5 text-xs font-semibold transition-colors ${
                       active
-                        ? "border-brand/60 bg-brand/[0.12] text-brand-bright"
-                        : "border-white/10 bg-white/[0.04] text-mid hover:border-brand/40 hover:bg-brand/[0.08] hover:text-brand-bright"
+                        ? "border-ok/40 bg-ok/10 text-ok"
+                        : softButtonClass
                     }`}
                   >
-                    {c.label}
+                    <span className="min-w-0 truncate">{c.label}</span>
                     {c.isNew && (
-                      <span className="rounded bg-brand/30 px-1 text-[9px] font-semibold leading-tight text-brand-bright">
+                      <span className="shrink-0 rounded bg-brand/10 px-1 text-[9px] font-semibold leading-tight text-brand">
                         NEW
                       </span>
                     )}
@@ -486,79 +513,62 @@ export default function QuickCheckForm() {
           );
         })()}
 
-        {models.length > 0 && (
-          <div className="relative">
-            <select
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              className="w-full appearance-none rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 pr-9 text-sm font-mono text-hi transition-colors focus:border-brand/60 focus:outline-none focus:ring-2 focus:ring-brand/20"
-            >
-              {models.map((m) => (
-                <option key={m} value={m} className="bg-base text-hi">
-                  {m}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-lo" />
-          </div>
-        )}
-
         <input
           id="model"
           name="model"
           type="text"
           value={model}
           onChange={(e) => setModel(e.target.value)}
-          placeholder="拉取后从上方选择,或手动输入 model id"
+          placeholder="拉取后从上方选择，或手动输入 model id"
           className={inputClass}
         />
 
         {hint && (
           <p
-            className={`text-xs leading-relaxed ${state === "error" ? "text-warn" : "text-lo"}`}
+            className={`break-words text-xs leading-relaxed ${state === "error" ? "text-warn" : "text-lo"}`}
           >
             {hint}
           </p>
         )}
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex min-w-0 flex-col gap-3">
         <button
           type="button"
           onClick={() => setAdvancedOpen((o) => !o)}
-          className="inline-flex items-center gap-1.5 self-start text-sm font-medium text-mid transition-colors hover:text-hi"
+          className="inline-flex items-center gap-1.5 self-start text-sm font-semibold text-mid transition-colors hover:text-hi"
         >
           <ChevronDown
             className={`h-4 w-4 transition-transform ${advancedOpen ? "rotate-180" : ""}`}
           />
           高级模式
           {!isQuick && (
-            <span className="text-brand-bright">· {modeMeta[mode].label}</span>
+            <span className="text-brand">· {modeMeta[mode].label}</span>
           )}
         </button>
 
         {advancedOpen && (
-          <div className="flex flex-col gap-4 rounded-xl border border-white/[0.07] bg-white/[0.02] p-4">
-            <div className="grid grid-cols-2 gap-2">
+          <div className={`flex min-w-0 flex-col gap-4 p-4 ${panelClass}`}>
+            <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
               {(Object.keys(modeMeta) as Mode[]).map((m) => (
                 <button
                   key={m}
                   type="button"
                   onClick={() => setMode(m)}
-                  className={`rounded-lg border px-3 py-2 text-left text-sm font-medium transition-all ${
+                  className={`rounded-lg border px-3 py-2 text-left text-sm font-semibold transition-all ${
                     mode === m
-                      ? "border-brand/60 bg-brand/[0.1] text-brand-bright"
-                      : "border-white/10 bg-white/[0.03] text-mid hover:border-white/20"
+                      ? "border-brand bg-brand/10 text-brand"
+                      : "border-slate-300 bg-white text-mid hover:border-brand/50"
                   }`}
                 >
                   {modeMeta[m].label}
                 </button>
               ))}
             </div>
-            <p className="text-xs leading-relaxed text-lo">
+            <p className="break-words text-xs leading-relaxed text-lo">
               {modeMeta[mode].desc}
             </p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
               {mode === "latency" && (
                 <>
                   <NumField label="总请求数" value={total} onChange={setTotal} min={1} />
@@ -593,20 +603,22 @@ export default function QuickCheckForm() {
       <button
         type="submit"
         disabled={submitting || !isQuick || (turnstileRequired && !turnstileToken)}
-        className="btn-glow w-full !py-3.5 !text-base disabled:opacity-60 disabled:pointer-events-none"
+        className="btn-glow w-full !py-3.5 !text-base disabled:pointer-events-none disabled:opacity-60"
       >
         {submitting ? (
-          <span className="inline-flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            {progress?.phase || "检测中"}
-            {progress?.state === "running" &&
-            progress.total > 0 &&
-            progress.done > 0
-              ? ` · ${progress.done}/${progress.total}`
-              : "…"}
+          <span className="inline-flex min-w-0 items-center justify-center gap-2">
+            <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
+            <span className="min-w-0 truncate">
+              {progress?.phase || "检测中"}
+              {progress?.state === "running" &&
+              progress.total > 0 &&
+              progress.done > 0
+                ? ` · ${progress.done}/${progress.total}`
+                : "…"}
+            </span>
           </span>
         ) : isQuick ? (
-          "开始快检"
+          "开始检测"
         ) : (
           `${modeMeta[mode].label} · 即将上线`
         )}
@@ -614,7 +626,7 @@ export default function QuickCheckForm() {
 
       {submitting && progress && (
         <div
-          className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.06]"
+          className="h-1.5 w-full overflow-hidden rounded-full bg-slate-200"
           aria-hidden
         >
           <div
@@ -642,7 +654,7 @@ export default function QuickCheckForm() {
                 <summary className="cursor-pointer text-[11px] text-warn/60 hover:text-warn/80 select-none">
                   显示原始报错
                 </summary>
-                <pre className="mt-1.5 whitespace-pre-wrap break-all rounded bg-black/20 px-2 py-1.5 text-[11px] text-warn/70">
+                <pre className="mt-1.5 whitespace-pre-wrap break-all rounded border border-warn/20 bg-white/70 px-2 py-1.5 text-[11px] text-warn/80">
                   {e.raw}
                 </pre>
               </details>
@@ -687,7 +699,7 @@ function NumField({
         min={min}
         step={step}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm font-mono text-hi focus:border-brand/60 focus:outline-none focus:ring-2 focus:ring-brand/20"
+        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-mono text-hi focus:border-brand/60 focus:outline-none focus:ring-2 focus:ring-brand/15"
       />
     </label>
   );

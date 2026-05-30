@@ -16,31 +16,31 @@ import type { CacheBar, TtftMarker } from "@/lib/report";
 
 // Recharts 需要真实色值,不能用 Tailwind class —— 直接引用设计 token 的 hex。
 const C = {
-  ok: "#22C55E",
-  warn: "#FBBF24",
-  err: "#F87171",
-  brand: "#3B82F6",
-  brandBright: "#60A5FA",
-  mid: "#97A2B8",
-  lo: "#5C6680",
-  card: "#0F1828",
-  grid: "rgba(255,255,255,0.06)",
+  ok: "#079455",
+  warn: "#DC8A00",
+  err: "#D92D20",
+  brand: "#1457D9",
+  brandBright: "#2563EB",
+  mid: "#475467",
+  lo: "#667085",
+  card: "#FFFFFF",
+  grid: "rgba(16,24,40,0.08)",
 };
 
 const axisProps = {
   tick: { fill: C.lo, fontSize: 11 },
-  stroke: "rgba(255,255,255,0.12)",
+  stroke: "rgba(16,24,40,0.16)",
 } as const;
 
 const tooltipStyle = {
   contentStyle: {
     background: C.card,
-    border: "1px solid rgba(255,255,255,0.1)",
+    border: "1px solid rgba(16,24,40,0.12)",
     borderRadius: 8,
     fontSize: 12,
   },
   labelStyle: { color: C.mid },
-  itemStyle: { color: "#EAEEF6" },
+  itemStyle: { color: "#101828" },
 } as const;
 
 // 图表容器:屏幕自适应宽度,打印固定宽度防止 ResponsiveContainer 塌成 0
@@ -114,7 +114,7 @@ export function CacheTokenBars({ data }: { data: CacheBar[] }) {
           tickLine={false}
           width={84}
         />
-        <Tooltip {...tooltipStyle} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
+        <Tooltip {...tooltipStyle} cursor={{ fill: "rgba(16,24,40,0.04)" }} />
         <Bar dataKey="uncachedInput" name="未命中输入" stackId="a" fill={C.lo} radius={[0, 0, 0, 0]} />
         <Bar dataKey="cacheRead" name="命中缓存" stackId="a" fill={C.ok} />
         <Bar dataKey="cacheCreation" name="写入缓存" stackId="a" fill={C.brand} radius={[0, 3, 3, 0]} />
@@ -151,7 +151,7 @@ export function CostCompareBars({
           tickLine={false}
           width={72}
         />
-        <Tooltip {...tooltipStyle} formatter={(v: number) => [`$${v.toFixed(4)}`, "成本"]} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
+        <Tooltip {...tooltipStyle} formatter={(v: number) => [`$${v.toFixed(4)}`, "成本"]} cursor={{ fill: "rgba(16,24,40,0.04)" }} />
         <Bar dataKey="usd" radius={[0, 4, 4, 0]} label={{ position: "right", fill: C.mid, fontSize: 11, formatter: (v: number) => `$${v.toFixed(3)}` }}>
           {data.map((d, i) => (
             <Cell key={i} fill={d.fill} fillOpacity={0.85} />
@@ -168,7 +168,7 @@ export function TtftTimeline({ markers }: { markers: TtftMarker[] }) {
   const total = markers[markers.length - 1].atMs || 1;
   return (
     <div className="w-full pt-2 pb-6">
-      <div className="relative h-2 w-full rounded-full bg-white/[0.06] print:bg-black/10">
+      <div className="relative h-2 w-full rounded-full bg-slate-200 print:bg-black/10">
         {/* 已完成段 */}
         <div className="absolute inset-y-0 left-0 rounded-full bg-brand/40 print:bg-[#1d4ed8]/35" style={{ width: "100%" }} />
         {markers.map((m, i) => {

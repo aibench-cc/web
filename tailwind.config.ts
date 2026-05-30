@@ -9,21 +9,21 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // 深空暗色 design tokens
-        base: "#070B14", // 页面最底
-        surface: "#0B1120", // 区块底
-        card: "#0F1828", // 卡片底
+        // 商业报告风 design tokens
+        base: "#EEF2F6", // 页面最底
+        surface: "#F6F8FB", // 区块底
+        card: "#FFFFFF", // 卡片底
         brand: {
-          DEFAULT: "#3B82F6",
-          bright: "#60A5FA",
-          deep: "#1E5FFF",
+          DEFAULT: "#1457D9",
+          bright: "#2563EB",
+          deep: "#133C8B",
         },
-        hi: "#EAEEF6", // 主文字
-        mid: "#97A2B8", // 次文字
-        lo: "#5C6680", // 弱文字
-        ok: "#22C55E",
-        warn: "#FBBF24",
-        err: "#F87171",
+        hi: "#101828", // 主文字
+        mid: "#475467", // 次文字
+        lo: "#667085", // 弱文字
+        ok: "#079455",
+        warn: "#DC8A00",
+        err: "#D92D20",
       },
       fontFamily: {
         sans: [
@@ -44,14 +44,14 @@ const config: Config = {
         ],
       },
       boxShadow: {
-        glow: "0 0 0 1px rgba(59,130,246,0.25), 0 8px 40px -8px rgba(59,130,246,0.35)",
-        "glow-sm": "0 0 24px -6px rgba(59,130,246,0.45)",
-        card: "0 1px 0 0 rgba(255,255,255,0.04) inset, 0 12px 40px -16px rgba(0,0,0,0.6)",
+        glow: "0 0 0 1px rgba(20,87,217,0.20), 0 12px 34px -16px rgba(20,87,217,0.45)",
+        "glow-sm": "0 18px 40px -24px rgba(20,87,217,0.35)",
+        card: "0 16px 44px -28px rgba(16,24,40,0.32)",
       },
       backgroundImage: {
-        grid: "linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)",
+        grid: "linear-gradient(to right, rgba(16,24,40,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(16,24,40,0.035) 1px, transparent 1px)",
         "radial-glow":
-          "radial-gradient(60% 60% at 50% 0%, rgba(59,130,246,0.18) 0%, rgba(59,130,246,0.06) 35%, transparent 70%)",
+          "radial-gradient(60% 60% at 50% 0%, rgba(20,87,217,0.12) 0%, rgba(20,87,217,0.04) 35%, transparent 70%)",
       },
       keyframes: {
         "fade-up": {

@@ -5,12 +5,12 @@ export default function RecentActivityTicker({ rows }: { rows: LeaderboardRow[] 
   const loop = [...items, ...items];
 
   return (
-    <div className="vendor-marquee overflow-hidden rounded-lg border border-white/[0.07] bg-white/[0.025]">
+    <div className="vendor-marquee overflow-hidden rounded-lg border border-slate-200 bg-white">
       <div className="vendor-track vendor-track--left gap-3 py-2">
         {loop.map((row, index) => (
           <div
             key={`${row.rankKey}-${index}`}
-            className="flex min-w-max items-center gap-2 border-r border-white/[0.07] px-4 text-xs text-mid"
+            className="flex min-w-max items-center gap-2 border-r border-slate-200 px-4 text-xs text-mid"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-ok" />
             <span className="font-mono text-hi">{row.channelHandle}</span>

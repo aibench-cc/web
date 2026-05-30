@@ -20,7 +20,7 @@ const sourceCopy: Record<SourceKind, { label: string; hint: string; icon: typeof
 const tone: Record<SourceKind, string> = {
   official: "border-ok/40 bg-ok/[0.08] text-ok",
   relay: "border-warn/40 bg-warn/[0.08] text-warn",
-  unknown: "border-white/12 bg-white/[0.04] text-lo",
+  unknown: "border-slate-200 bg-slate-50 text-lo",
 };
 
 const dotTone: Record<SourceSignal["signal"], string> = {
@@ -67,9 +67,9 @@ export default function SourceBadge({
       </button>
 
       {open && (
-        <div className="grid gap-2 border-t border-white/[0.07] bg-black/10 px-3 py-3 sm:grid-cols-2">
+        <div className="grid gap-2 border-t border-current/10 bg-white/55 px-3 py-3 sm:grid-cols-2">
           {signals.map((signal) => (
-            <div key={signal.label} className="min-w-0 rounded-md border border-white/[0.07] bg-white/[0.025] px-2.5 py-2">
+            <div key={signal.label} className="min-w-0 rounded-md border border-current/10 bg-white px-2.5 py-2">
               <div className="flex items-center gap-2">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${dotTone[signal.signal]}`} />
                 <span className="truncate text-[11px] text-lo">{signal.label}</span>

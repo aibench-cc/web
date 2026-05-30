@@ -28,7 +28,7 @@ export default function LeaderboardPreview({ rows }: { rows: LeaderboardRow[] })
         </div>
         <Link
           href="/leaderboard"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-bright transition-colors hover:text-hi"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-brand transition-colors hover:text-hi"
         >
           查看完整榜单
           <ArrowRight className="h-4 w-4" />
@@ -38,7 +38,7 @@ export default function LeaderboardPreview({ rows }: { rows: LeaderboardRow[] })
       <RecentActivityTicker rows={topRows} />
 
       <div className="glass-card mt-4 overflow-hidden">
-        <div className="hidden grid-cols-[44px_1.35fr_1fr_72px_84px_72px_80px] gap-2 border-b border-white/[0.06] px-5 py-3 text-xs font-medium uppercase tracking-wider text-lo md:grid">
+        <div className="hidden grid-cols-[44px_1.35fr_1fr_72px_84px_72px_80px] gap-2 border-b border-slate-200 bg-slate-50 px-5 py-3 text-xs font-medium uppercase tracking-wider text-lo md:grid">
           <div>#</div>
           <div>渠道 / 模型</div>
           <div></div>
@@ -51,7 +51,7 @@ export default function LeaderboardPreview({ rows }: { rows: LeaderboardRow[] })
         {topRows.map((row, index) => (
           <div
             key={row.rankKey}
-            className="grid grid-cols-2 gap-2 border-b border-white/[0.04] px-5 py-3.5 text-sm transition-colors last:border-0 hover:bg-white/[0.025] md:grid-cols-[44px_1.35fr_1fr_72px_84px_72px_80px]"
+            className="grid grid-cols-2 gap-2 border-b border-slate-100 px-5 py-3.5 text-sm transition-colors last:border-0 hover:bg-slate-50 md:grid-cols-[44px_1.35fr_1fr_72px_84px_72px_80px]"
           >
             <div className="font-mono text-lo md:self-center">
               {String(index + 1).padStart(2, "0")}
@@ -69,7 +69,7 @@ export default function LeaderboardPreview({ rows }: { rows: LeaderboardRow[] })
               {fmtCacheHit(row.cacheHitRate)}
             </div>
             <div className="text-center md:self-center">
-              <span className={`inline-flex h-6 w-6 items-center justify-center rounded-md border border-white/10 bg-white/[0.04] font-mono text-xs font-bold ${gradeTone(row.grade)}`}>
+              <span className={`inline-flex h-6 w-6 items-center justify-center rounded-md border border-slate-200 bg-slate-50 font-mono text-xs font-bold ${gradeTone(row.grade)}`}>
                 {row.grade}
               </span>
             </div>

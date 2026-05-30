@@ -5,7 +5,7 @@ import CompareNavLink from "./CompareNavLink";
 
 export default function SiteHeader() {
   return (
-    <header className="sticky top-9 z-50 border-b border-white/[0.06] bg-base/70 backdrop-blur-xl">
+    <header className="sticky top-9 z-50 border-b border-slate-200 bg-white/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-2">
           <Image
@@ -37,7 +37,7 @@ export default function SiteHeader() {
           <Link href="/about" className="hidden shrink-0 transition-colors hover:text-hi md:inline">
             关于
           </Link>
-          <Link href="/#check" className="btn-glow shrink-0 !px-3 !py-2 !text-xs sm:!px-4">
+          <Link href="/#check" className="btn-glow hidden shrink-0 !px-3 !py-2 !text-xs sm:inline-flex sm:!px-4">
             开始检测
           </Link>
         </nav>

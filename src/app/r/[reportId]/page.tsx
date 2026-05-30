@@ -51,7 +51,7 @@ export default async function ReportPage({
       <>
         <SiteHeader />
         <main className="mx-auto max-w-2xl px-6 pt-16 pb-12">
-          <div className="rounded-2xl border border-warn/25 bg-warn/[0.06] px-6 py-10 text-center">
+          <div className="rounded-lg border border-warn/25 bg-warn/[0.06] px-6 py-10 text-center shadow-card">
             <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full border border-warn/30 bg-warn/[0.1]">
               <Clock className="h-5 w-5 text-warn" />
             </div>
@@ -73,13 +73,13 @@ export default async function ReportPage({
               </Link>
               <Link
                 href="/history"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-mid transition-colors hover:border-white/20 hover:text-hi"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-mid transition-colors hover:border-brand/50 hover:bg-brand/5 hover:text-hi"
               >
                 我的记录
               </Link>
               <Link
                 href="/r/sample-yellow"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-mid transition-colors hover:border-white/20 hover:text-hi"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-mid transition-colors hover:border-brand/50 hover:bg-brand/5 hover:text-hi"
               >
                 看一份示例报告
               </Link>

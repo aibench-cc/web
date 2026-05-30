@@ -36,7 +36,7 @@ const signalTone: Record<ProbeSignal, string> = {
   green: "border-ok/35 bg-ok/[0.08] text-ok",
   yellow: "border-warn/40 bg-warn/[0.08] text-warn",
   red: "border-err/40 bg-err/[0.08] text-err",
-  na: "border-white/10 bg-white/[0.03] text-lo",
+  na: "border-slate-200 bg-slate-50 text-lo",
 };
 
 function SignalIcon({ signal }: { signal: ProbeSignal }) {
@@ -52,25 +52,25 @@ export default function DimensionCardV2({ group }: { group: ProbeGroup }) {
 
   return (
     <section className="glass-card overflow-hidden">
-      <div className="border-b border-white/[0.06] px-4 py-3.5">
+      <div className="border-b border-slate-200 bg-slate-50/60 px-4 py-3.5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <h2 className="text-base font-semibold text-hi">{group.title}</h2>
             <p className="mt-1 text-sm leading-relaxed text-mid">{group.summary}</p>
           </div>
-          <div className="shrink-0 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2 text-right">
+          <div className="shrink-0 rounded-lg border border-slate-200 bg-white px-3 py-2 text-right">
             <div className="font-mono text-lg font-semibold text-hi">
               {group.score}/{group.maxScore}
             </div>
             <div className="text-[11px] text-lo">{percent}%</div>
           </div>
         </div>
-        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-          <div className="h-full rounded-full bg-brand-bright" style={{ width: `${percent}%` }} />
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-slate-200">
+          <div className="h-full rounded-full bg-brand" style={{ width: `${percent}%` }} />
         </div>
       </div>
 
-      <div className="divide-y divide-white/[0.05]">
+      <div className="divide-y divide-slate-100">
         {group.probes.map((probe) => {
           const expanded = openProbe === probe.name;
           const rawTrace = probe.raw_trace ?? probe.rawTrace;
@@ -98,7 +98,7 @@ export default function DimensionCardV2({ group }: { group: ProbeGroup }) {
               </button>
 
               {expanded && rawTrace !== undefined && (
-                <div className="mt-3 pl-10">
+                <div className="mt-3 pl-0 sm:pl-10">
                   <RawTraceViewer title={`${probe.name} raw_trace`} trace={rawTrace} />
                 </div>
               )}

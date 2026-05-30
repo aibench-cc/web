@@ -109,38 +109,39 @@ export default async function HomePage() {
 
 function Header() {
   return (
-    <header className="sticky top-9 z-50 border-b border-white/[0.06] bg-base/70 backdrop-blur-xl">
-      <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
+    <header className="sticky top-9 z-50 border-b border-slate-200 bg-white/85 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+        <Link href="/" className="flex shrink-0 items-center gap-2">
           <Image
             src="/aibench-logo.svg"
             alt="AIBench.cc"
             width={132}
             height={28}
             priority
+            className="h-auto w-[96px] sm:w-[132px]"
           />
         </Link>
-        <nav className="flex items-center gap-7 text-sm text-mid">
-          <Link href="/leaderboard" className="transition-colors hover:text-hi">
+        <nav className="flex min-w-0 flex-1 items-center justify-end gap-4 overflow-x-auto whitespace-nowrap text-xs text-mid [scrollbar-width:none] sm:gap-7 sm:text-sm [&::-webkit-scrollbar]:hidden">
+          <Link href="/leaderboard" className="shrink-0 transition-colors hover:text-hi">
             行业榜
           </Link>
           <CompareNavLink />
-          <Link href="/history" className="transition-colors hover:text-hi">
+          <Link href="/history" className="hidden shrink-0 transition-colors hover:text-hi sm:inline">
             我的记录
           </Link>
           <a
             href="https://github.com/aibench-cc"
             target="_blank"
             rel="noopener"
-            className="inline-flex items-center gap-1.5 transition-colors hover:text-hi"
+            className="hidden shrink-0 items-center gap-1.5 transition-colors hover:text-hi md:inline-flex"
           >
             <Github className="h-4 w-4" />
             GitHub
           </a>
-          <Link href="/about" className="transition-colors hover:text-hi">
+          <Link href="/about" className="hidden shrink-0 transition-colors hover:text-hi md:inline">
             关于
           </Link>
-          <Link href="#check" className="btn-glow !px-4 !py-2 !text-xs">
+          <Link href="#check" className="btn-glow hidden shrink-0 !px-3 !py-2 !text-xs sm:inline-flex sm:!px-4">
             开始检测
           </Link>
         </nav>
@@ -153,27 +154,27 @@ function Hero({ checks }: { checks: number }) {
   return (
     <section
       id="check"
-      className="mx-auto max-w-6xl px-6 pt-20 pb-16 lg:pt-28 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start"
+      className="mx-auto grid max-w-6xl min-w-0 grid-cols-1 items-start gap-10 px-4 pb-14 pt-14 sm:px-6 lg:grid-cols-12 lg:gap-14 lg:pb-16 lg:pt-20"
     >
-      <div className="lg:col-span-5 flex flex-col gap-7 animate-fade-up">
-        <span className="inline-flex items-center gap-2 self-start rounded-full border border-brand/25 bg-brand/[0.08] px-3.5 py-1.5 text-xs font-medium text-brand-bright">
-          <span className="h-1.5 w-1.5 rounded-full bg-brand-bright animate-pulse-dot" />
+      <div className="flex min-w-0 flex-col gap-7 animate-fade-up lg:col-span-5">
+        <span className="inline-flex items-center gap-2 self-start rounded-full border border-brand/25 bg-brand/10 px-3.5 py-1.5 text-xs font-semibold text-brand">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse-dot" />
           开源 · 中立 · 多厂商
         </span>
-        <h1 className="text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.1]">
+        <h1 className="break-words text-4xl font-semibold leading-[1.1] tracking-tight lg:text-5xl">
           <span className="text-hi">你买的是</span>
           <span className="num-gradient text-glow">Opus 4.7</span>
           <span className="text-hi">，</span>
           <br />
           <span className="text-hi">跑出来真的是 Opus 4.7 吗？</span>
         </h1>
-        <p className="max-w-md text-base lg:text-lg text-mid leading-relaxed">
+        <p className="max-w-md break-words text-base leading-relaxed text-mid lg:text-lg">
           一次检测，验证延迟 / 缓存 / 模型纯度 / 限流 —— OpenAI · Anthropic · Gemini · 国产协议通用。
         </p>
         <TrustRow checks={checks} />
         <HomeStatsPanel channels={checks} />
       </div>
-      <div className="lg:col-span-7 animate-fade-up [animation-delay:120ms]">
+      <div className="min-w-0 animate-fade-up [animation-delay:120ms] lg:col-span-7">
         <QuickCheckForm />
       </div>
     </section>
@@ -182,24 +183,24 @@ function Hero({ checks }: { checks: number }) {
 
 function TrustRow({ checks }: { checks: number }) {
   return (
-    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-lo">
+    <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-lo">
       <span className="inline-flex items-center gap-1.5">
         <span className="h-1.5 w-1.5 rounded-full bg-ok animate-pulse-dot" />
         已为开发者检测
         <span className="font-mono font-semibold text-hi">{checks.toLocaleString()}</span>
         次
       </span>
-      <span className="text-white/15">·</span>
+      <span className="text-slate-300">·</span>
       <span className="inline-flex items-center gap-1">
         <ShieldCheck className="h-3.5 w-3.5 text-ok" />
         key 不落盘
       </span>
-      <span className="text-white/15">·</span>
+      <span className="text-slate-300">·</span>
       <a
         href="https://github.com/aibench-cc"
         target="_blank"
         rel="noopener"
-        className="inline-flex items-center gap-1 transition-colors hover:text-brand-bright"
+        className="inline-flex items-center gap-1 transition-colors hover:text-brand"
       >
         <Github className="h-3.5 w-3.5" />
         开源可审计
@@ -217,7 +218,7 @@ function HomeStatsPanel({ channels }: { channels: number }) {
     { g: "C", n: C, label: "存疑", dot: "bg-err", text: "text-err", bar: "bg-err" },
   ];
   return (
-    <div className="glass-card relative p-5 flex flex-col gap-4 max-w-md">
+    <div className="glass-card relative flex w-full min-w-0 max-w-md flex-col gap-4 overflow-hidden p-5">
       <div className="flex items-center justify-between">
         <span className="inline-flex items-center gap-2 text-xs font-medium text-mid">
           <span className="h-1.5 w-1.5 rounded-full bg-ok animate-pulse-dot" />
@@ -225,20 +226,20 @@ function HomeStatsPanel({ channels }: { channels: number }) {
         </span>
         <Link
           href="/leaderboard"
-          className="text-xs text-brand-bright transition-colors hover:text-hi"
+          className="text-xs font-semibold text-brand transition-colors hover:text-hi"
         >
           详情 →
         </Link>
       </div>
 
-      <div className="flex items-end justify-between">
-        <div>
+      <div className="flex min-w-0 items-end justify-between gap-4">
+        <div className="min-w-0">
           <div className="num-gradient text-glow font-mono text-4xl font-semibold tracking-tight">
             {channels.toLocaleString()}
           </div>
           <div className="mt-1 text-sm text-mid">已检测 API 渠道</div>
         </div>
-        <div className="text-right">
+        <div className="shrink-0 text-right">
           <div className="text-xs text-lo">整体行业质量</div>
           <div className="mt-1 text-base font-semibold text-warn">
             {heroStats.verdict}
@@ -246,7 +247,7 @@ function HomeStatsPanel({ channels }: { channels: number }) {
         </div>
       </div>
 
-      <div className="flex h-2 overflow-hidden rounded-full bg-white/[0.05]">
+      <div className="flex h-2 overflow-hidden rounded-full bg-slate-200">
         {grades.map((x) => (
           <span
             key={x.g}
@@ -255,9 +256,9 @@ function HomeStatsPanel({ channels }: { channels: number }) {
           />
         ))}
       </div>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
         {grades.map((x) => (
-          <div key={x.g} className="flex items-center gap-2">
+          <div key={x.g} className="flex min-w-0 items-center gap-2">
             <span className={`h-2 w-2 rounded-full ${x.dot}`} />
             <span className={`font-mono text-sm font-semibold ${x.text}`}>
               {x.n}
@@ -279,12 +280,12 @@ function StatBand() {
     { value: "6", label: "检测维度", sub: "延迟 / 纯度 / 成本 …" },
   ];
   return (
-    <section className="mx-auto max-w-6xl px-6 py-8">
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-px overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.05]">
+    <section className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <div className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-slate-200 bg-slate-200 sm:grid-cols-3">
         {stats.map((s) => (
           <div
             key={s.label}
-            className="group bg-card/60 px-8 py-10 text-center transition-colors hover:bg-card"
+            className="group bg-white px-8 py-10 text-center transition-colors hover:bg-slate-50"
           >
             <div className="num-gradient text-glow font-mono text-5xl lg:text-6xl font-semibold tracking-tight">
               {s.value}
@@ -328,7 +329,7 @@ const howSteps: Step[] = [
 
 function HowItWorks() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
+    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="mb-10">
         <h2 className="text-2xl lg:text-3xl font-semibold text-hi">工作原理</h2>
         <p className="text-mid mt-2 max-w-xl leading-relaxed">
@@ -340,7 +341,7 @@ function HowItWorks() {
           <div key={s.step} className="relative">
             <div className="glass-card h-full p-6 flex flex-col gap-4">
               <div className="flex items-center justify-between">
-                <div className="h-10 w-10 rounded-xl border border-brand/20 bg-brand/[0.1] text-brand-bright flex items-center justify-center">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-brand/20 bg-brand/10 text-brand">
                   <s.icon className="h-5 w-5" />
                 </div>
                 <span className="num-gradient font-mono text-2xl font-semibold tracking-tight">
@@ -360,7 +361,7 @@ function HowItWorks() {
         想看完整检测方法学？
         <Link
           href="/about#methodology"
-          className="ml-1 text-brand-bright transition-colors hover:text-hi"
+          className="ml-1 text-brand transition-colors hover:text-hi"
         >
           查看检测原理 →
         </Link>
@@ -371,7 +372,7 @@ function HowItWorks() {
 
 function DimensionsSection() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
+    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="mb-10">
         <h2 className="text-2xl lg:text-3xl font-semibold text-hi">检测维度</h2>
         <p className="text-mid mt-2 max-w-xl leading-relaxed">
@@ -390,7 +391,7 @@ function DimensionsSection() {
 function DimensionCard({ icon: Icon, title, desc }: Dimension) {
   return (
     <div className="group glass-card p-6 flex flex-col gap-4 transition-all duration-200 ease-spring hover:-translate-y-1 hover:border-brand/40 hover:shadow-glow-sm">
-      <div className="h-10 w-10 rounded-xl border border-brand/20 bg-brand/[0.1] text-brand-bright flex items-center justify-center transition-colors group-hover:bg-brand/20">
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-brand/20 bg-brand/10 text-brand transition-colors group-hover:bg-brand/15">
         <Icon className="h-5 w-5" />
       </div>
       <h3 className="text-base font-semibold text-hi">{title}</h3>
@@ -401,7 +402,7 @@ function DimensionCard({ icon: Icon, title, desc }: Dimension) {
 
 function VendorsSection() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
+    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="mb-10">
         <h2 className="text-2xl lg:text-3xl font-semibold text-hi">厂商覆盖</h2>
         <p className="text-mid mt-2 max-w-xl leading-relaxed">
@@ -415,13 +416,9 @@ function VendorsSection() {
 
 function CTASection() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
-      <div className="relative overflow-hidden rounded-3xl border border-brand/20 bg-gradient-to-br from-brand/[0.12] via-card/40 to-transparent p-8 lg:p-14">
-        <div
-          className="pointer-events-none absolute -top-24 right-0 h-64 w-64 rounded-full opacity-60 blur-3xl"
-          style={{ background: "radial-gradient(circle, rgba(59,130,246,0.35), transparent 70%)" }}
-        />
-        <div className="relative flex flex-col lg:flex-row gap-8 lg:items-center lg:justify-between">
+    <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <div className="overflow-hidden rounded-lg border border-brand/20 bg-white p-8 shadow-card lg:p-12">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <h2 className="text-2xl lg:text-3xl font-semibold text-hi">
               把渠道质量摆到台面上
@@ -430,7 +427,7 @@ function CTASection() {
               报告可一键分享。匿名结果聚合进公开榜单，让真正稳的渠道被看见，把偷工减料的晾出来。
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <Link href="#check" className="btn-glow">
               立即检测
             </Link>

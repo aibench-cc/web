@@ -4,7 +4,7 @@ import { Github } from "lucide-react";
 
 export default function SponsorFooter() {
   return (
-    <footer className="relative mt-16 border-t border-white/[0.06] bg-surface/40">
+    <footer className="relative mt-16 border-t border-slate-200 bg-white/65">
       <div className="mx-auto max-w-6xl px-6 py-12 flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
         <div className="max-w-2xl flex flex-col gap-4">
           <Image
@@ -19,7 +19,7 @@ export default function SponsorFooter() {
               href="https://modelboxs.com/"
               target="_blank"
               rel="noopener"
-              className="font-semibold text-hi underline-offset-4 hover:text-brand-bright hover:underline"
+              className="font-semibold text-hi underline-offset-4 hover:text-brand hover:underline"
             >
               模盒
             </a>{" "}
@@ -33,7 +33,7 @@ export default function SponsorFooter() {
             href="https://modelboxs.com/"
             target="_blank"
             rel="noopener"
-            className="group inline-flex items-center gap-2.5 rounded-xl border border-white/[0.07] bg-card/60 px-4 py-2.5 transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:border-brand/40"
+            className="group inline-flex items-center gap-2.5 rounded-lg border border-slate-300 bg-white px-4 py-2.5 transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:border-brand/50 hover:bg-brand/5"
           >
             <Image
               src="/modelboxs-logo.jpg"

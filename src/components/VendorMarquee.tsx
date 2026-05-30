@@ -15,7 +15,7 @@ export type Vendor = { name: string; accent: string };
 function VendorChip({ vendor }: { vendor: Vendor }) {
   return (
     <span
-      className="group inline-flex shrink-0 items-center gap-2.5 rounded-xl border border-white/[0.07] bg-card/60 px-4 py-2.5 text-sm text-mid backdrop-blur-sm transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:border-brand/40 hover:bg-card hover:text-hi hover:shadow-glow-sm"
+      className="group inline-flex shrink-0 items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-mid transition-all duration-200 ease-spring hover:-translate-y-0.5 hover:border-brand/40 hover:bg-brand/5 hover:text-hi hover:shadow-glow-sm"
     >
       <span
         className="h-2 w-2 rounded-full shadow-[0_0_10px_var(--dot)] transition-transform group-hover:scale-125"

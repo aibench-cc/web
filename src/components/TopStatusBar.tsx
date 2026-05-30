@@ -52,9 +52,9 @@ export default function TopStatusBar() {
   }, []);
 
   return (
-    <div className="sticky top-0 z-[60] border-b border-white/[0.05] bg-base/85 backdrop-blur-xl print:hidden">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-2 text-xs text-mid">
-        <div className="flex items-center gap-4 overflow-x-auto">
+    <div className="sticky top-0 z-[60] border-b border-slate-200 bg-white/90 backdrop-blur-xl print:hidden">
+      <div className="mx-auto flex max-w-6xl min-w-0 items-center justify-between gap-3 px-4 py-2 text-xs text-mid sm:px-6">
+        <div className="flex min-w-0 flex-1 items-center gap-4 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <span className="hidden font-medium text-mid sm:inline">上游状态</span>
           {data.providers.map((p) => (
             <span
