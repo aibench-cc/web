@@ -163,10 +163,10 @@ function Hero({ checks }: { checks: number }) {
         </span>
         <h1 className="break-words text-4xl font-semibold leading-[1.1] tracking-tight lg:text-5xl">
           <span className="text-hi">你买的是</span>
-          <span className="num-gradient text-glow">Opus 4.7</span>
+          <span className="num-gradient text-glow">Opus 4.8</span>
           <span className="text-hi">，</span>
           <br />
-          <span className="text-hi">跑出来真的是 Opus 4.7 吗？</span>
+          <span className="text-hi">跑出来真的是 Opus 4.8 吗？</span>
         </h1>
         <p className="max-w-md break-words text-base leading-relaxed text-mid lg:text-lg">
           一次检测，验证延迟 / 缓存 / 模型纯度 / 限流 —— OpenAI · Anthropic · Gemini · 国产协议通用。

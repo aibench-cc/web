@@ -19,6 +19,7 @@ import {
   dimTitle,
 } from "@/lib/report";
 import { addCompareId } from "@/lib/compare";
+import Toast, { type ToastState, type ToastTone } from "@/components/ui/Toast";
 import ReportHeader from "./ReportHeader";
 import ReportHeaderV2 from "./ReportHeaderV2";
 import DimensionCard from "./DimensionCard";
@@ -227,7 +228,16 @@ export default function ReportView({
   const [selection, setSelection] = useState<Record<DimKey, boolean>>(allSelected);
   const [detail, setDetail] = useState<PrintDetail>("full");
   const [shareToast, setShareToast] = useState(false);
+  const [toast, setToast] = useState<ToastState | null>(null);
   const v2Groups = probeGroupsFromReport(report.probes);
+
+  function showToast(tone: ToastTone, title: string, message?: string) {
+    const next = { id: Date.now(), tone, title, message };
+    setToast(next);
+    window.setTimeout(() => {
+      setToast((current) => (current?.id === next.id ? null : current));
+    }, 3600);
+  }
 
   // 打印流程: 勾选确认 -> 进入打印态(强制展开)-> 等渲染完触发原生打印 -> 打印结束复位
   useEffect(() => {
@@ -241,9 +251,13 @@ export default function ReportView({
     };
   }, [printing]);
 
-  const handleShare = () => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href).catch(() => {});
+  const handleShare = async () => {
+    try {
+      if (!navigator.clipboard) throw new Error("clipboard unavailable");
+      await navigator.clipboard.writeText(window.location.href);
+      showToast("success", "分享链接已复制", "可以直接发给同事或采购负责人。");
+    } catch {
+      showToast("warn", "浏览器阻止了自动复制", "请手动复制地址栏里的报告链接。");
     }
     setShareToast(true);
     setTimeout(() => setShareToast(false), 2200);
@@ -256,6 +270,63 @@ export default function ReportView({
 
   // 打印态: summary 模式下整卡折叠态(只出结论), 不强制展开
   const forceExpand = printing && detail === "full";
+
+  if (useV2Header) {
+    return (
+      <main className="mx-auto max-w-6xl min-w-0 overflow-x-hidden px-4 pt-10 pb-8 sm:px-6 print:max-w-none print:px-0 print:pt-0">
+        <PrintHeader checkedAt={report.meta.checkedAt} />
+
+        <div className="flex min-w-0 flex-col gap-5 print:gap-4">
+          <ReportHeaderV2
+            report={report}
+            onAction={(action) => {
+              if (action === "打印") setShowSelector(true);
+              if (action === "分享") void handleShare();
+              if (action === "加入对比") handleAddCompare();
+              if (action === "重测") {
+                showToast("info", "回到检测表单", "可以重新输入渠道信息再次检测。");
+                router.push("/#check");
+              }
+            }}
+          />
+
+          <section className="min-w-0">
+            <p className="mb-3 px-1 text-xs text-lo print:hidden">
+              下面是各维度的结论，点击任意一张卡片可展开专业判据与原始证据。
+            </p>
+            <DimensionGroupV2 groups={v2Groups} />
+            <p className="mt-4 text-center text-xs text-lo">
+              判据全部公开，你可以自己复核 ·{" "}
+              <a
+                href="/about#methodology"
+                className="text-brand transition-colors hover:text-hi print:hidden"
+              >
+                如何复核 →
+              </a>
+            </p>
+          </section>
+        </div>
+
+        <PrintFooter reportId={report.reportId} model={report.meta.model} />
+
+        {showSelector && (
+          <PrintSelector
+            selection={selection}
+            detail={detail}
+            onChange={setSelection}
+            onDetailChange={setDetail}
+            onConfirm={() => {
+              setShowSelector(false);
+              setPrinting(true);
+              showToast("info", "准备打印报告", "浏览器打印窗口即将打开。");
+            }}
+            onClose={() => setShowSelector(false)}
+          />
+        )}
+        <Toast toast={toast} onClose={() => setToast(null)} />
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto max-w-6xl min-w-0 overflow-x-hidden px-4 pt-10 pb-8 sm:px-6 print:max-w-none print:px-0 print:pt-0">
@@ -272,7 +343,7 @@ export default function ReportView({
               report={report}
               onAction={(action) => {
                 if (action === "打印") setShowSelector(true);
-                if (action === "分享") handleShare();
+                if (action === "分享") void handleShare();
                 if (action === "加入对比") handleAddCompare();
                 if (action === "重测") router.push("/#check");
               }}
@@ -347,6 +418,7 @@ export default function ReportView({
           onClose={() => setShowSelector(false)}
         />
       )}
+      <Toast toast={toast} onClose={() => setToast(null)} />
     </main>
   );
 }

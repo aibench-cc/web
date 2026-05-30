@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck, RefreshCw, ChevronDown, Loader2 } from "lucide-react";
 import TurnstileWidget from "@/components/TurnstileWidget";
+import Toast, { type ToastState, type ToastTone } from "@/components/ui/Toast";
 import { saveHistory } from "@/lib/history";
 
 const API_BASE =
@@ -35,7 +36,7 @@ const MODEL_CHIPS: ModelChip[] = [
   { label: "GPT 4o", protocol: "openai", modelId: "gpt-4o" },
   { label: "o3-mini", protocol: "openai", modelId: "o3-mini" },
   // Anthropic
-  { label: "Opus 4.7", protocol: "anthropic", modelId: "claude-opus-4-7", isNew: true },
+  { label: "Opus 4.8", protocol: "anthropic", modelId: "claude-opus-4-8", isNew: true },
   { label: "Sonnet 4.6", protocol: "anthropic", modelId: "claude-sonnet-4-6" },
   { label: "Haiku 4.5", protocol: "anthropic", modelId: "claude-haiku-4-5" },
   { label: "Opus 4.5", protocol: "anthropic", modelId: "claude-opus-4-5" },
@@ -147,6 +148,39 @@ function friendlyRunError(raw: string | null | undefined): FriendlyError {
   };
 }
 
+const phaseCopy: Record<string, string> = {
+  protocol: "协议结构",
+  schema: "协议结构",
+  headers: "响应头",
+  purity: "模型纯度",
+  identity: "模型身份",
+  model: "模型身份",
+  load: "并发负载",
+  safety: "稳定性",
+  latency: "延迟分布",
+  stream: "流式响应",
+  ttft: "首字延迟",
+  cache: "缓存命中",
+  cost: "真实成本",
+  source: "来源识别",
+  provenance: "来源识别",
+  ratelimit: "限流策略",
+  rate_limit: "限流策略",
+  rpm: "RPM 限流",
+  tpm: "TPM 吞吐",
+};
+
+function friendlyPhase(phase: string | null | undefined): string {
+  if (!phase?.trim()) return "检测中";
+  const parts = phase
+    .toLowerCase()
+    .split(/[+/_\s-]+/)
+    .map((part) => phaseCopy[part] ?? part)
+    .filter(Boolean);
+  if (parts.length === 0) return "检测中";
+  return `正在检测：${Array.from(new Set(parts)).join(" / ")}`;
+}
+
 export default function QuickCheckForm() {
   const [protocol, setProtocol] = useState<ProtocolId>("openai");
   const [baseUrl, setBaseUrl] = useState("");
@@ -168,6 +202,7 @@ export default function QuickCheckForm() {
   const [submitting, setSubmitting] = useState(false);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
+  const [toast, setToast] = useState<ToastState | null>(null);
   const [turnstileToken, setTurnstileToken] = useState<string>("");
   const turnstileRequired = Boolean(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY);
 
@@ -177,10 +212,19 @@ export default function QuickCheckForm() {
   const activePlaceholder =
     protocols.find((p) => p.id === protocol)?.placeholder ?? "";
 
+  function showToast(tone: ToastTone, title: string, message?: string) {
+    const next = { id: Date.now(), tone, title, message };
+    setToast(next);
+    window.setTimeout(() => {
+      setToast((current) => (current?.id === next.id ? null : current));
+    }, 3600);
+  }
+
   async function fetchModels() {
     if (!apiKey.trim()) {
       setState("error");
       setHint("请先填写 api_key,再拉取该渠道下可用的模型。");
+      showToast("warn", "还不能拉取模型", "请先填写 api_key。");
       return;
     }
     setState("loading");
@@ -213,20 +257,24 @@ export default function QuickCheckForm() {
       setHint(
         "暂未连接到检测后端,可先手动输入 model id。后端接通后,这里会自动拉取该渠道的真实模型列表。",
       );
+      showToast("warn", "模型列表暂时拉取失败", "可能是后端未启动、网络不通或上游暂时不可用。你仍然可以手动输入 model id。");
     }
   }
 
   async function startRun() {
     if (!apiKey.trim()) {
       setRunError("请先填写 api_key。");
+      showToast("warn", "缺少 API key", "请先填写 api_key 后再开始检测。");
       return;
     }
     if (!model.trim()) {
       setRunError("请先选择或手动输入 model id。");
+      showToast("warn", "缺少模型名", "请先选择或手动输入 model id。");
       return;
     }
     if (turnstileRequired && !turnstileToken) {
       setRunError("请先完成人机验证。");
+      showToast("warn", "需要完成人机验证", "通过验证后才能开始检测。");
       return;
     }
     setRunError(null);
@@ -262,10 +310,14 @@ export default function QuickCheckForm() {
         return;
       }
       setSubmitting(false);
-      setRunError(final.message || "检测未通过,请检查渠道信息后重试。");
+      const message = final.message || "检测未通过,请检查渠道信息后重试。";
+      setRunError(message);
+      showToast("error", "检测没有完成", friendlyRunError(message).action);
     } catch {
       setSubmitting(false);
-      setRunError("无法连接检测后端,请确认后端已启动后重试。");
+      const message = "无法连接检测后端,请确认后端已启动后重试。";
+      setRunError(message);
+      showToast("error", "无法连接检测服务", "可能是本地网络、后端服务或上游渠道暂时不可用。");
     }
   }
 
@@ -609,7 +661,7 @@ export default function QuickCheckForm() {
           <span className="inline-flex min-w-0 items-center justify-center gap-2">
             <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
             <span className="min-w-0 truncate">
-              {progress?.phase || "检测中"}
+              {friendlyPhase(progress?.phase)}
               {progress?.state === "running" &&
               progress.total > 0 &&
               progress.done > 0
@@ -673,6 +725,7 @@ export default function QuickCheckForm() {
         <ShieldCheck className="h-3.5 w-3.5 text-ok" />
         预计 ~{estSeconds}s · key 仅本次转发不留存 · 算法核心开源
       </p>
+      <Toast toast={toast} onClose={() => setToast(null)} />
     </form>
   );
 }

@@ -67,14 +67,16 @@ export default function SourceBadge({
       </button>
 
       {open && (
-        <div className="grid gap-2 border-t border-current/10 bg-white/55 px-3 py-3 sm:grid-cols-2">
+        <div className="grid max-h-52 gap-2 overflow-y-auto border-t border-current/10 bg-white/55 px-3 py-3 sm:grid-cols-2">
           {signals.map((signal) => (
-            <div key={signal.label} className="min-w-0 rounded-md border border-current/10 bg-white px-2.5 py-2">
+            <div key={signal.label} className="min-w-0 overflow-hidden rounded-md border border-current/10 bg-white px-2.5 py-2">
               <div className="flex items-center gap-2">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${dotTone[signal.signal]}`} />
                 <span className="truncate text-[11px] text-lo">{signal.label}</span>
               </div>
-              <div className="mt-1 truncate font-mono text-xs text-hi">{signal.value}</div>
+              <div className="mt-1 max-h-12 overflow-y-auto break-all font-mono text-xs text-hi">
+                {signal.value}
+              </div>
             </div>
           ))}
         </div>
